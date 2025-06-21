@@ -46,6 +46,18 @@ pub struct GetLibraryContentRequest {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct GetImageRequest {
+    pub uri: String,
+}
+
+impl From<String> for GetImageRequest {
+    fn from(uri: String) -> Self {
+        GetImageRequest { uri }
+    }
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct RequestPermissionsArgs {
     pub source: MediaLibrarySource,
 }

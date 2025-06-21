@@ -111,40 +111,65 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                 }
             }
 
+    private fun createImageJSObjectFromCursor(cursor: Cursor): JSObject {
+        val idIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+        val dataColumnIndex =
+                cursor.getColumnIndexOrThrow(
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+                                MediaStore.Images.Media.RELATIVE_PATH
+                        else MediaStore.Images.Media.DATA
+                )
+        val mimeTypeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+        val ret = JSObject()
+        val imageId = cursor.getLong(idIndex)
+        val imagePath = cursor.getString(dataColumnIndex)
+        val mimeType = cursor.getString(mimeTypeColumnIndex)
+
+        val contentUri =
+                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
+
+        ret.put("path", imagePath)
+        ret.put("contentUri", contentUri.toString())
+        ret.put("mimeType", mimeType)
+
+        return ret
+    }
+
     fun getAllImages(limit: Int, offset: Int, imageSource: String): List<JSObject> {
         val imageList = mutableListOf<JSObject>()
 
         getQuery(limit, offset, imageSource)?.use { cursor ->
-            val idIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val dataColumnIndex =
-                    cursor.getColumnIndexOrThrow(
-                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
-                                    MediaStore.Images.Media.RELATIVE_PATH
-                            else MediaStore.Images.Media.DATA
-                    )
-
-            val mimeTypeColumnIndex =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-
             while (cursor.moveToNext()) {
-                val ret = JSObject()
-                val imageId = cursor.getLong(idIndex)
-                val imagePath = cursor.getString(dataColumnIndex)
-                val mimeType = cursor.getString(mimeTypeColumnIndex)
-
-                val contentUri =
-                        ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                imageId
-                        )
-
-                ret.put("path", imagePath)
-                ret.put("contentUri", contentUri.toString())
-                ret.put("mimeType", mimeType)
-
+                val ret = createImageJSObjectFromCursor(cursor)
                 imageList.add(ret)
             }
         }
         return imageList
+    }
+
+    fun getImage(contentUriString: String): JSObject? {
+        try {
+            val uri = Uri.parse(contentUriString)
+            val projection =
+                    arrayOf(
+                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+                                    MediaStore.Images.Media.RELATIVE_PATH
+                            else MediaStore.Images.Media.DATA,
+                            MediaStore.Images.Media._ID,
+                            MediaStore.Images.Media.MIME_TYPE,
+                            MediaStore.Images.ImageColumns.DATE_TAKEN,
+                    )
+
+            contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val ret = createImageJSObjectFromCursor(cursor)
+                    return ret
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get image info for URI: $contentUriString", e)
+        }
+        return null
     }
 }

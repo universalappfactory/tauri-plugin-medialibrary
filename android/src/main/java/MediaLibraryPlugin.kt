@@ -30,6 +30,11 @@ class RequestPermissionArgs(val source: String) {
     constructor() : this("")
 }
 
+@InvokeArg
+class GetImageArgs(val uri: String) {
+    constructor() : this("")
+}
+
 private const val EXTERNAL_STORAGE_ALIAS = "externalStorage"
 private const val WRITE_EXTERNAL_STORAGE_ALIAS = "writeExternalStorage"
 private const val MEDIA_IMAGES_ALIAS = "readMediaImages"
@@ -58,11 +63,19 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
     fun getImages(invoke: Invoke) {
         val args = invoke.parseArgs(GetImagesArgs::class.java)
 
-        // requestPermissions(invoke)
         val mediaLibaray = MediaLibrary(activity.contentResolver)
 
         val ret = JSObject()
         ret.put("items", JSArray(mediaLibaray.getAllImages(args.limit, args.offset, args.source)))
+        invoke.resolve(ret)
+    }
+
+    @Command
+    fun getImage(invoke: Invoke) {
+        val args = invoke.parseArgs(GetImageArgs::class.java)
+
+        val mediaLibaray = MediaLibrary(activity.contentResolver)
+        val ret = mediaLibaray.getImage(args.uri)
         invoke.resolve(ret)
     }
 

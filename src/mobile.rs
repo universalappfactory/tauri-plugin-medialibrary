@@ -32,6 +32,12 @@ impl<R: Runtime> Medialibrary<R> {
             .map_err(Into::into)
     }
 
+    pub fn get_image(&self, request: GetImageRequest) -> crate::Result<Option<ImageInfo>> {
+        self.0
+            .run_mobile_plugin("getImage", request)
+            .map_err(Into::into)
+    }
+
     pub fn check_permissions(&self) -> crate::Result<PermissionResponse> {
         self.0
             .run_mobile_plugin::<PermissionResponse>("checkPermissions", ())

@@ -24,6 +24,10 @@ impl<R: Runtime> Medialibrary<R> {
         return XdgDirectoryReader::read_directory(&request);
     }
 
+    pub fn get_image(&self, _request: GetImageRequest) -> crate::Result<Option<ImageInfo>> {
+        todo!()
+    }
+
     pub fn check_permissions(&self) -> crate::Result<PermissionResponse> {
         Ok(PermissionResponse::granted())
     }

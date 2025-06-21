@@ -3,6 +3,7 @@ const COMMANDS: &[&str] = &[
     "get_thumbnail",
     "get_available_sources",
     "request_permissions",
+    "get_image",
 ];
 
 #[derive(schemars::JsonSchema)]

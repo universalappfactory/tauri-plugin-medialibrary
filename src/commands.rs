@@ -41,6 +41,14 @@ pub(crate) async fn get_thumbnail<R: Runtime>(
 }
 
 #[command]
+pub(crate) async fn get_image<R: Runtime>(
+    app: AppHandle<R>,
+    uri: String,
+) -> Result<Option<ImageInfo>> {
+    return app.medialibrary().get_image(uri.into());
+}
+
+#[command]
 pub(crate) async fn get_available_sources<R: Runtime>(
     _app: AppHandle<R>,
     global_scope: GlobalScope<Entry>,

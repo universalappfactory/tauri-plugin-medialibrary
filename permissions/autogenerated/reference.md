@@ -41,6 +41,58 @@ Denies the get_available_sources command without any pre-configured scope.
 <tr>
 <td>
 
+`medialibrary:allow-get-image  `
+
+</td>
+<td>
+
+Enables the get_image   command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`medialibrary:deny-get-image  `
+
+</td>
+<td>
+
+Denies the get_image   command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`medialibrary:allow-get-image`
+
+</td>
+<td>
+
+Enables the get_image command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`medialibrary:deny-get-image`
+
+</td>
+<td>
+
+Denies the get_image command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `medialibrary:allow-get-images`
 
 </td>
