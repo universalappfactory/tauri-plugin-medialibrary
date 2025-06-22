@@ -82,7 +82,7 @@ export async function getImages(
 }
 
 export async function getImage(contentUri: string): Promise<ImageInfo | null> {
-  return await invokeCommand<GetImagesResult | null>(async () => {
+  return await invokeCommand<ImageInfo | null>(async () => {
     return await invoke("plugin:medialibrary|get_image", {
       uri: contentUri,
     });
