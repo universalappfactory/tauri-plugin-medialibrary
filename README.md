@@ -176,13 +176,15 @@ const result = await getImages(request);
 ## Open an image with the default application
 
 You can use the `opener` plugin to open an image with the default application:
+
 https://github.com/tauri-apps/plugins-workspace/tree/v2/plugins/opener
 
-It is also abel to open android content uris.
+It is also able to open android content uris.
 
 ## Reading an image
 
-For reading images you can use the tauri fs plugin:
+For reading images, you can use the tauri fs plugin:
+
 https://github.com/tauri-apps/plugins-workspace/tree/v2/plugins/fs
 
 E.g. in rust
