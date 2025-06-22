@@ -17,7 +17,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c --failAfterWarnings"
   },
   "dependencies": {
     "@tauri-apps/api": ">=2.0.0-beta.6"
