@@ -20,7 +20,7 @@
     "build": "rollup -c --failAfterWarnings"
   },
   "dependencies": {
-    "@tauri-apps/api": ">=2.0.0-beta.6"
+    "@tauri-apps/api": "2.6.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",

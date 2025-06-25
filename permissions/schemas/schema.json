@@ -297,82 +297,98 @@
         {
           "description": "Enables the get_available_sources command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-available-sources"
+          "const": "allow-get-available-sources",
+          "markdownDescription": "Enables the get_available_sources command without any pre-configured scope."
         },
         {
           "description": "Denies the get_available_sources command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-available-sources"
+          "const": "deny-get-available-sources",
+          "markdownDescription": "Denies the get_available_sources command without any pre-configured scope."
         },
         {
           "description": "Enables the get_image   command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-image  "
+          "const": "allow-get-image  ",
+          "markdownDescription": "Enables the get_image   command without any pre-configured scope."
         },
         {
           "description": "Denies the get_image   command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-image  "
+          "const": "deny-get-image  ",
+          "markdownDescription": "Denies the get_image   command without any pre-configured scope."
         },
         {
           "description": "Enables the get_image command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-image"
+          "const": "allow-get-image",
+          "markdownDescription": "Enables the get_image command without any pre-configured scope."
         },
         {
           "description": "Denies the get_image command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-image"
+          "const": "deny-get-image",
+          "markdownDescription": "Denies the get_image command without any pre-configured scope."
         },
         {
           "description": "Enables the get_images command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-images"
+          "const": "allow-get-images",
+          "markdownDescription": "Enables the get_images command without any pre-configured scope."
         },
         {
           "description": "Denies the get_images command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-images"
+          "const": "deny-get-images",
+          "markdownDescription": "Denies the get_images command without any pre-configured scope."
         },
         {
           "description": "Enables the get_thumbnail command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-thumbnail"
+          "const": "allow-get-thumbnail",
+          "markdownDescription": "Enables the get_thumbnail command without any pre-configured scope."
         },
         {
           "description": "Denies the get_thumbnail command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-thumbnail"
+          "const": "deny-get-thumbnail",
+          "markdownDescription": "Denies the get_thumbnail command without any pre-configured scope."
         },
         {
           "description": "Enables the ping command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-ping"
+          "const": "allow-ping",
+          "markdownDescription": "Enables the ping command without any pre-configured scope."
         },
         {
           "description": "Denies the ping command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-ping"
+          "const": "deny-ping",
+          "markdownDescription": "Denies the ping command without any pre-configured scope."
         },
         {
           "description": "Enables the request_permissions command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-request-permissions"
+          "const": "allow-request-permissions",
+          "markdownDescription": "Enables the request_permissions command without any pre-configured scope."
         },
         {
           "description": "Denies the request_permissions command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-request-permissions"
+          "const": "deny-request-permissions",
+          "markdownDescription": "Denies the request_permissions command without any pre-configured scope."
         },
         {
           "description": "Default permissions for the plugin",
           "type": "string",
-          "const": "default"
+          "const": "default",
+          "markdownDescription": "Default permissions for the plugin"
         },
         {
           "description": "Sets a global scope.",
           "type": "string",
-          "const": "global-scope"
+          "const": "global-scope",
+          "markdownDescription": "Sets a global scope."
         }
       ]
     }
