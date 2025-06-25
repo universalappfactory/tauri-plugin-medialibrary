@@ -1,6 +1,6 @@
 {
   "name": "@universalappfactory/tauri-plugin-medialibrary",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": "Dirk Lehmeier",
   "description": "",
   "type": "module",
