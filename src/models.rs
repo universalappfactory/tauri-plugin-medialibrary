@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{collections::HashMap, fmt::Display};
 
 use serde::{Deserialize, Serialize};
 use tauri::plugin::PermissionState;
@@ -68,6 +68,7 @@ pub struct ImageInfo {
     pub path: String,
     pub content_uri: String,
     pub mime_type: String,
+    pub meta_data: Option<HashMap<String, String>>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]

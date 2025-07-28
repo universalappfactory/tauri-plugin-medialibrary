@@ -129,9 +129,21 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
         val contentUri =
                 ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
 
+        val metaData = JSObject()
+        val dateTakenMillis =
+                cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN))
+        val dateTakenIso8601 =
+                if (dateTakenMillis > 0) {
+                    java.time.Instant.ofEpochMilli(dateTakenMillis).toString()
+                } else {
+                    null
+                }
+        metaData.put("dateTaken", dateTakenIso8601)
+
         ret.put("path", imagePath)
         ret.put("contentUri", contentUri.toString())
         ret.put("mimeType", mimeType)
+        ret.put("metaData", metaData)
 
         return ret
     }

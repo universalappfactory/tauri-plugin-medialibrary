@@ -58,6 +58,7 @@ impl DirectoryReader for XdgDirectoryReader {
                                         path: path.to_string_lossy().to_string(),
                                         content_uri: format!("file://{}", path.to_string_lossy()),
                                         mime_type,
+                                        meta_data: None,
                                     });
                                 }
                             }

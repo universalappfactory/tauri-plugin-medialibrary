@@ -16,3 +16,4 @@ node_modules/
 dist-js
 dist
 examples/tauri-app
+covector_template.md
