@@ -13,12 +13,10 @@ pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
                     Err(Error::InvalidUriScheme(scheme.to_string()))
                 }
             }
-            _ => return Err(Error::InvalidUriScheme(uri.to_string())),
+            _ => Err(Error::InvalidUriScheme(uri.to_string())),
         },
         Err(err) => Err(Error::ParseUriError(format!(
-            "uri: {}, {}",
-            uri.to_string(),
-            err
+            "uri: {uri}, {err}"
         ))),
     }
 }

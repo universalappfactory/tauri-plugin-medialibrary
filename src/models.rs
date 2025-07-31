@@ -14,30 +14,24 @@ pub enum MediaLibrarySource {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Default)]
 pub enum SortColumn {
+    #[default]
     DateAdded,
     DateModified,
     #[cfg(target_os = "android")]
     DateTaken,
 }
 
-impl Default for SortColumn {
-    fn default() -> Self {
-        SortColumn::DateAdded
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Default)]
 pub enum SortDirection {
+    #[default]
     Ascending,
     Descending,
 }
 
-impl Default for SortDirection {
-    fn default() -> Self {
-        SortDirection::Ascending
-    }
-}
 
 impl Display for MediaLibrarySource {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
