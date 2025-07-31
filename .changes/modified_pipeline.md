@@ -2,4 +2,4 @@
 "tauri-plugin-medialibrary-js": patch
 ---
 
-- modified the build pipeline
+- added support for sorting
