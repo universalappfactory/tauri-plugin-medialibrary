@@ -2,11 +2,11 @@ name: version or publish
 
 on:
   push:
-    branches-ignore:
-      - main
-  pull_request:
-    branches-ignore:
-      - main
+    branches:
+      - "feature/**"
+      - "bugfix/**"
+      - "hotfix/**"
+      - "main"
 
 permissions:
   # required for npm provenance
@@ -62,3 +62,4 @@ jobs:
           labels: "version updates"
           branch: "ci/release-${{ github.ref_name }}"
           body: ${{ steps.covector.outputs.change }}
+          base: main
