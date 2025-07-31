@@ -56,6 +56,8 @@ export interface GetLibraryContentRequest {
   limit: number;
   offset: number;
   source: MediaLibrarySource;
+  sortColumn?: SortColumn;
+  sortDirection?: SortDirection;
 }
 
 export interface GetPermissionsRequest {
@@ -103,6 +105,17 @@ export enum MediaLibrarySource {
   ExternalStorage = "ExternalStorage",
   VolumeExternalPrimary = "VolumeExternalPrimary",
   PictureDir = "PictureDir",
+}
+
+export enum SortDirection {
+  Ascending,
+  Descending,
+}
+
+export enum SortColumn {
+  DateAdded = "DateAdded",
+  DateModified = "DateModified",
+  DateTaken = "DateTaken",
 }
 
 export async function getAvailableSources(): Promise<

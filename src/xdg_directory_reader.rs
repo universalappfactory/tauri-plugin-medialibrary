@@ -3,7 +3,6 @@ use crate::{
     MediaLibrarySource,
 };
 use std::fs;
-use xdg_user;
 
 pub struct XdgDirectoryReader;
 

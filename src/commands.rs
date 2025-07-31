@@ -21,7 +21,9 @@ pub(crate) async fn get_images<R: Runtime>(
         return Err(Error::MediaLibrarySourceForbidden(request.source));
     }
 
-    return app.medialibrary().get_images(request);
+    println!("xx sortDirection.value: {:?}", request.sort_direction);
+
+    app.medialibrary().get_images(request)
 }
 
 #[command]
@@ -45,7 +47,7 @@ pub(crate) async fn get_image<R: Runtime>(
     app: AppHandle<R>,
     uri: String,
 ) -> Result<Option<ImageInfo>> {
-    return app.medialibrary().get_image(uri.into());
+    app.medialibrary().get_image(uri.into())
 }
 
 #[command]
@@ -60,5 +62,5 @@ pub(crate) async fn get_available_sources<R: Runtime>(
         .map(|f| f.source.clone())
         .collect();
 
-    return Ok(allowed_sources);
+    Ok(allowed_sources)
 }

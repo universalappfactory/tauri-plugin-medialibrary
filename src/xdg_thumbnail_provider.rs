@@ -25,9 +25,9 @@ impl ThumbnailProvider for XdgThumbnailProvider {
                 let bytes = fs::read(&thumb.path)?;
                 let content = general_purpose::STANDARD.encode(&bytes);
 
-                return Ok(GetThumbnailResponse { content });
+                Ok(GetThumbnailResponse { content })
             }
-            Err(error) => Err(Error::AllMyToes(format!("allmytoes error: {:?}", error))),
+            Err(error) => Err(Error::AllMyToes(format!("allmytoes error: {error:?}"))),
         }
     }
 }
