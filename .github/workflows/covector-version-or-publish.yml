@@ -2,8 +2,11 @@ name: version or publish
 
 on:
   push:
-    branches:
-      - "!main"
+    branches-ignore:
+      - main
+  pull_request:
+    branches-ignore:
+      - main
 
 permissions:
   # required for npm provenance
