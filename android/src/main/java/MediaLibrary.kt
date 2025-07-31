@@ -64,11 +64,20 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
         }
     }
 
-    private fun getSortString(sortDirection: SortDirection?): String {
+    private fun getSortColumn(sortColumn: SortColumn?): String {
+        return when (sortColumn) {
+            SortColumn.DateTaken -> MediaStore.Images.ImageColumns.DATE_TAKEN
+            SortColumn.DateAdded -> MediaStore.Images.ImageColumns.DATE_ADDED
+            SortColumn.DateModified -> MediaStore.Images.ImageColumns.DATE_MODIFIED
+            null -> MediaStore.Images.ImageColumns.DATE_ADDED
+        }
+    }
+
+    private fun getSortString(sortColumn: SortColumn?, sortDirection: SortDirection?): String {
         return when (sortDirection) {
-            SortDirection.Descending -> MediaStore.Images.ImageColumns.DATE_ADDED + " DESC"
-            SortDirection.Ascending -> MediaStore.Images.ImageColumns.DATE_ADDED + " ASC"
-            null -> MediaStore.Images.ImageColumns.DATE_ADDED + " DESC"
+            SortDirection.Descending -> getSortColumn(sortColumn) + " DESC"
+            SortDirection.Ascending -> getSortColumn(sortColumn) + " ASC"
+            null -> getSortColumn(sortColumn) + " DESC"
         }
     }
 
@@ -76,6 +85,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
             limit: Int,
             offset: Int,
             imageSource: String,
+            sortColumn: SortColumn?,
             sortDirection: SortDirection?
     ): Cursor? {
         val projection = getImageProjection()
@@ -90,7 +100,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                     Bundle().apply {
                         putStringArray(
                                 ContentResolver.QUERY_ARG_SORT_COLUMNS,
-                                arrayOf(MediaStore.Images.Media.DATE_ADDED)
+                                arrayOf(getSortColumn(sortColumn))
                         )
 
                         putInt(
@@ -109,7 +119,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                     null,
             )
         } else {
-            val sort = getSortString(sortDirection)
+            val sort = getSortString(sortColumn, sortDirection)
             contentResolver.query(
                     imageCollection,
                     projection,
@@ -178,7 +188,8 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
     fun getAllImages(args: GetImagesArgs): List<JSObject> {
         val imageList = mutableListOf<JSObject>()
 
-        getQuery(args.limit, args.offset, args.source, args.sortDirection)?.use { cursor ->
+        getQuery(args.limit, args.offset, args.source, args.sortColumn, args.sortDirection)?.use {
+                cursor ->
             while (cursor.moveToNext()) {
                 val ret = createImageJSObjectFromCursor(cursor)
                 imageList.add(ret)
