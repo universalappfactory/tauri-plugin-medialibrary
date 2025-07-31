@@ -5,8 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import app.tauri.annotation.Command
-import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.Permission
 import app.tauri.annotation.PermissionCallback
 import app.tauri.annotation.TauriPlugin
@@ -14,26 +14,6 @@ import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSArray
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
-
-@InvokeArg
-class GetImagesArgs(val limit: Int, val offset: Int, val source: String) {
-    constructor() : this(10, 0, "")
-}
-
-@InvokeArg
-class GetThumbnailArgs(val uri: String) {
-    constructor() : this("")
-}
-
-@InvokeArg
-class RequestPermissionArgs(val source: String) {
-    constructor() : this("")
-}
-
-@InvokeArg
-class GetImageArgs(val uri: String) {
-    constructor() : this("")
-}
 
 private const val EXTERNAL_STORAGE_ALIAS = "externalStorage"
 private const val WRITE_EXTERNAL_STORAGE_ALIAS = "writeExternalStorage"
@@ -65,8 +45,10 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
 
         val mediaLibaray = MediaLibrary(activity.contentResolver)
 
+        Log.e("MediaLibraryPlugin", args.sortDirection.toString())
+
         val ret = JSObject()
-        ret.put("items", JSArray(mediaLibaray.getAllImages(args.limit, args.offset, args.source)))
+        ret.put("items", JSArray(mediaLibaray.getAllImages(args)))
         invoke.resolve(ret)
     }
 

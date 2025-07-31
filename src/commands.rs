@@ -1,3 +1,4 @@
+use crate::error;
 use crate::scope::Entry;
 use crate::MedialibraryExt;
 use crate::Result;
@@ -20,6 +21,8 @@ pub(crate) async fn get_images<R: Runtime>(
     {
         return Err(Error::MediaLibrarySourceForbidden(request.source));
     }
+
+    println!("xx sortDirection.value: {:?}", request.sort_direction);
 
     return app.medialibrary().get_images(request);
 }

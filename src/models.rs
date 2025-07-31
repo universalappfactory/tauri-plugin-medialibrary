@@ -13,6 +13,32 @@ pub enum MediaLibrarySource {
     VolumeExternalPrimary,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum SortColumn {
+    DateAdded,
+    DateModified,
+    #[cfg(target_os = "android")]
+    DateTaken,
+}
+
+impl Default for SortColumn {
+    fn default() -> Self {
+        SortColumn::DateAdded
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum SortDirection {
+    Ascending,
+    Descending,
+}
+
+impl Default for SortDirection {
+    fn default() -> Self {
+        SortDirection::Ascending
+    }
+}
+
 impl Display for MediaLibrarySource {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -42,6 +68,8 @@ pub struct GetLibraryContentRequest {
     pub limit: usize,
     pub offset: usize,
     pub source: MediaLibrarySource,
+    pub sort_column: Option<SortColumn>,
+    pub sort_direction: Option<SortDirection>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
