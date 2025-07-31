@@ -1,5 +1,11 @@
 # Changelog
 
+## \[0.5.0]
+
+- [`91dd5da`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/91dd5dafbcfebca1aa7ffeaa1fd6141b2788492d) -   Added more metadata fields (dateAdded, dateModified)
+  - Added support for sorting by multiple columns
+  - Added support to specify a sort order (ascending or descending)
+
 ## \[0.4.0]
 
 - [`7881440`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/7881440906b8406e40d4e5160dd93db5abf529f7) -   Added a metadata property to the ImageInfo result structure
