@@ -43,17 +43,21 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
         }
     }
 
-    fun getQuery(limit: Int, offset: Int, imageSource: String): Cursor? {
-        val projection =
-                arrayOf(
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
-                                MediaStore.Images.Media.RELATIVE_PATH
-                        else MediaStore.Images.Media.DATA,
-                        MediaStore.Images.Media._ID,
-                        MediaStore.Images.Media.MIME_TYPE,
-                        MediaStore.Images.ImageColumns.DATE_TAKEN,
-                )
+    private fun getImageProjection(): Array<String> {
+        return arrayOf(
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+                        MediaStore.Images.Media.RELATIVE_PATH
+                else MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.DATE_ADDED,
+                MediaStore.Images.ImageColumns.DATE_MODIFIED,
+        )
+    }
 
+    fun getQuery(limit: Int, offset: Int, imageSource: String): Cursor? {
+        val projection = getImageProjection()
         val imageCollection = getImageSource(imageSource) ?: return null
 
         // https://developer.android.com/reference/android/content/ContentProvider#query(android.net.Uri,%20java.lang.String[],%20android.os.Bundle,%20android.os.CancellationSignal)
@@ -65,7 +69,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                     Bundle().apply {
                         putStringArray(
                                 ContentResolver.QUERY_ARG_SORT_COLUMNS,
-                                arrayOf(MediaStore.Images.Media.DATE_TAKEN)
+                                arrayOf(MediaStore.Images.Media.DATE_ADDED)
                         )
 
                         putInt(
@@ -84,7 +88,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                     null,
             )
         } else {
-            val sort = MediaStore.Images.ImageColumns.DATE_TAKEN
+            val sort = MediaStore.Images.ImageColumns.DATE_ADDED
             contentResolver.query(
                     imageCollection,
                     projection,
@@ -111,6 +115,14 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                 }
             }
 
+    private fun getDateMetaData(cursor: Cursor, column: String): String? {
+        val dateTakenMillis = cursor.getLong(cursor.getColumnIndexOrThrow(column))
+        if (dateTakenMillis > 0) {
+            return java.time.Instant.ofEpochMilli(dateTakenMillis).toString()
+        }
+        return null
+    }
+
     private fun createImageJSObjectFromCursor(cursor: Cursor): JSObject {
         val idIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
         val dataColumnIndex =
@@ -130,15 +142,9 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                 ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
 
         val metaData = JSObject()
-        val dateTakenMillis =
-                cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN))
-        val dateTakenIso8601 =
-                if (dateTakenMillis > 0) {
-                    java.time.Instant.ofEpochMilli(dateTakenMillis).toString()
-                } else {
-                    null
-                }
-        metaData.put("dateTaken", dateTakenIso8601)
+        metaData.put("dateTaken", getDateMetaData(cursor, MediaStore.Images.Media.DATE_TAKEN))
+        metaData.put("dateAdded", getDateMetaData(cursor, MediaStore.Images.Media.DATE_ADDED))
+        metaData.put("dateModified", getDateMetaData(cursor, MediaStore.Images.Media.DATE_MODIFIED))
 
         ret.put("path", imagePath)
         ret.put("contentUri", contentUri.toString())
@@ -163,15 +169,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
     fun getImage(contentUriString: String): JSObject? {
         try {
             val uri = Uri.parse(contentUriString)
-            val projection =
-                    arrayOf(
-                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
-                                    MediaStore.Images.Media.RELATIVE_PATH
-                            else MediaStore.Images.Media.DATA,
-                            MediaStore.Images.Media._ID,
-                            MediaStore.Images.Media.MIME_TYPE,
-                            MediaStore.Images.ImageColumns.DATE_TAKEN,
-                    )
+            val projection = getImageProjection()
 
             contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
