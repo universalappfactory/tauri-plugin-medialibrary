@@ -1,6 +1,6 @@
 # Changelog
 
-## \[0.5.1]
+## \[0.5.2]
 
 - [`c8fc912`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/c8fc912cab522ad60843c82a3daa6caf8cbf8bbd) -   modified the build pipeline
 
