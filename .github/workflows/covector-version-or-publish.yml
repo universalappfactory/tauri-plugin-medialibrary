@@ -3,9 +3,6 @@ name: version or publish
 on:
   push:
     branches:
-      - "feature/**"
-      - "bugfix/**"
-      - "hotfix/**"
       - "main"
 
 permissions:
@@ -62,4 +59,3 @@ jobs:
           labels: "version updates"
           branch: "ci/release-${{ github.ref_name }}"
           body: ${{ steps.covector.outputs.change }}
-          base: main
