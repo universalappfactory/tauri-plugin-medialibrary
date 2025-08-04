@@ -199,3 +199,7 @@ match self.app_handle.fs().open(path, options) {
     }
 }
 ```
+
+## Example Application
+
+An example application is available [here](https://github.com/universalappfactory/tauri-plugin-medialibrary-example).
