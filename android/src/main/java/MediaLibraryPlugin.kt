@@ -45,8 +45,6 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
 
         val mediaLibaray = MediaLibrary(activity.contentResolver)
 
-        Log.e("MediaLibraryPlugin", args.sortDirection.toString())
-
         val ret = JSObject()
         ret.put("items", JSArray(mediaLibaray.getAllImages(args)))
         invoke.resolve(ret)

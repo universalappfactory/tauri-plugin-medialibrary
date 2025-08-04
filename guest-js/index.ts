@@ -108,8 +108,8 @@ export enum MediaLibrarySource {
 }
 
 export enum SortDirection {
-  Ascending,
-  Descending,
+  Ascending = "Ascending",
+  Descending = "Descending",
 }
 
 export enum SortColumn {
