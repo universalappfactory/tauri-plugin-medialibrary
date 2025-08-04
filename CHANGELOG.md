@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.6.0]
+
+- [`16732d6`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/16732d61eab659aad045011980c0f54ca73947f5) -   fixed the javascript sort direction enum (now as string)
+
 ## \[0.5.3]
 
 - [`c8fc912`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/c8fc912cab522ad60843c82a3daa6caf8cbf8bbd) -   added support for sorting
