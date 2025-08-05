@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
@@ -43,17 +44,45 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
         }
     }
 
+    // maybe there is a better way to get the base path (when MediaStore.Images.Media.DATA is
+    // deprecated)
+    // https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#DATA
+    private fun getStorageBasePath(source: MediaLibrarySource): String {
+        return when (source) {
+            MediaLibrarySource.ExternalStorage -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    "/storage/emulated/0/"
+                } else {
+                    Environment.getExternalStorageDirectory().absolutePath + "/"
+                }
+            }
+            MediaLibrarySource.VolumeExternalPrimary -> {
+                "/storage/emulated/0/"
+            }
+        }
+    }
+
     private fun getImageProjection(): Array<String> {
-        return arrayOf(
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
-                        MediaStore.Images.Media.RELATIVE_PATH
-                else MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.MIME_TYPE,
-                MediaStore.Images.ImageColumns.DATE_TAKEN,
-                MediaStore.Images.ImageColumns.DATE_ADDED,
-                MediaStore.Images.ImageColumns.DATE_MODIFIED,
-        )
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            arrayOf(
+                    MediaStore.Images.Media.RELATIVE_PATH,
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.ImageColumns.DATE_TAKEN,
+                    MediaStore.Images.ImageColumns.DATE_ADDED,
+                    MediaStore.Images.ImageColumns.DATE_MODIFIED,
+            )
+        } else {
+            arrayOf(
+                    MediaStore.Images.Media.DATA,
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.ImageColumns.DATE_TAKEN,
+                    MediaStore.Images.ImageColumns.DATE_ADDED,
+                    MediaStore.Images.ImageColumns.DATE_MODIFIED,
+            )
+        }
     }
 
     private fun getSortDirection(sortDirection: SortDirection?): Int {
@@ -155,19 +184,33 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
     }
 
     private fun createImageJSObjectFromCursor(cursor: Cursor): JSObject {
+        return createImageJSObjectFromCursor(cursor, MediaLibrarySource.ExternalStorage)
+    }
+
+    private fun createImageJSObjectFromCursor(
+            cursor: Cursor,
+            source: MediaLibrarySource
+    ): JSObject {
         val idIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-        val dataColumnIndex =
-                cursor.getColumnIndexOrThrow(
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
-                                MediaStore.Images.Media.RELATIVE_PATH
-                        else MediaStore.Images.Media.DATA
-                )
         val mimeTypeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
 
         val ret = JSObject()
         val imageId = cursor.getLong(idIndex)
-        val imagePath = cursor.getString(dataColumnIndex)
         val mimeType = cursor.getString(mimeTypeColumnIndex)
+
+        val imagePath =
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                    val relativePathIndex =
+                            cursor.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
+                    val displayNameIndex =
+                            cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                    val relativePath = cursor.getString(relativePathIndex) ?: ""
+                    val displayName = cursor.getString(displayNameIndex) ?: ""
+                    getStorageBasePath(source) + relativePath + displayName
+                } else {
+                    val dataColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    cursor.getString(dataColumnIndex)
+                }
 
         val contentUri =
                 ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
@@ -187,11 +230,12 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
 
     fun getAllImages(args: GetImagesArgs): List<JSObject> {
         val imageList = mutableListOf<JSObject>()
+        val source = MediaLibrarySource.valueOf(args.source)
 
         getQuery(args.limit, args.offset, args.source, args.sortColumn, args.sortDirection)?.use {
                 cursor ->
             while (cursor.moveToNext()) {
-                val ret = createImageJSObjectFromCursor(cursor)
+                val ret = createImageJSObjectFromCursor(cursor, source)
                 imageList.add(ret)
             }
         }
@@ -205,7 +249,11 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
 
             contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
-                    val ret = createImageJSObjectFromCursor(cursor)
+                    val ret =
+                            createImageJSObjectFromCursor(
+                                    cursor,
+                                    MediaLibrarySource.ExternalStorage
+                            )
                     return ret
                 }
             }
