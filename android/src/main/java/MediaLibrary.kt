@@ -154,7 +154,7 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
                     projection,
                     null,
                     null,
-                    "$sort DESC LIMIT $limit OFFSET $offset"
+                    "$sort LIMIT $limit OFFSET $offset"
             )
         }
     }
