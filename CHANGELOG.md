@@ -1,5 +1,10 @@
 # Changelog
 
+## \[0.7.0]
+
+- [`b492bda`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/b492bdaef95593c636f9eb2317322153995f7693) -   Added additional metadata fields with data from the media file itself
+  - Added an enum for metadata fields
+
 ## \[0.6.0]
 
 - [`16732d6`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/16732d61eab659aad045011980c0f54ca73947f5) -   fixed the javascript sort direction enum (now as string)
