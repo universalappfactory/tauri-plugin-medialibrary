@@ -21,9 +21,12 @@ pub(crate) async fn get_images<R: Runtime>(
         return Err(Error::MediaLibrarySourceForbidden(request.source));
     }
 
-    println!("xx sortDirection.value: {:?}", request.sort_direction);
+    let include_file_metadata = request.include_file_metadata.unwrap_or_default();
 
-    app.medialibrary().get_images(request)
+    match app.medialibrary().get_images(request) {
+        Ok(images) => Ok(images.with_file_metadata(include_file_metadata)),
+        Err(err) => Err(err),
+    }
 }
 
 #[command]
