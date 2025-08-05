@@ -1,5 +1,11 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fmt::Display, fs, path::Path};
+use std::{
+    collections::HashMap,
+    fmt::Display,
+    fs::{self},
+    path::Path,
+};
 use tauri::plugin::PermissionState;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -26,6 +32,20 @@ pub enum SortDirection {
     #[default]
     Ascending,
     Descending,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Hash, Eq)]
+#[serde(rename_all = "camelCase")]
+pub enum MetaDataField {
+    DateAdded,
+    DateModified,
+    DateTaken,
+    FileCreated,
+    FileModified,
+    FileSize,
+    FileName,
+    FileExtension,
+    FileReadOnly,
 }
 
 impl Display for MediaLibrarySource {
@@ -86,7 +106,7 @@ pub struct ImageInfo {
     pub path: String,
     pub content_uri: String,
     pub mime_type: String,
-    pub meta_data: Option<HashMap<String, String>>,
+    pub meta_data: Option<HashMap<MetaDataField, String>>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -134,34 +154,34 @@ impl ImageInfo {
     pub fn with_file_metadata(self) -> Self {
         if let Ok(metadata) = fs::metadata(&self.path) {
             let mut meta_data = self.meta_data.unwrap_or_default();
-            meta_data.insert("file_file_size".to_string(), metadata.len().to_string());
+            meta_data.insert(MetaDataField::FileSize, metadata.len().to_string());
 
             if let Ok(created) = metadata.created() {
-                if let Ok(duration) = created.duration_since(std::time::UNIX_EPOCH) {
-                    meta_data.insert("file_created".to_string(), duration.as_secs().to_string());
-                }
+                let datetime: DateTime<Utc> = created.into();
+                let iso_string = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+                meta_data.insert(MetaDataField::FileCreated, iso_string);
             }
 
             if let Ok(modified) = metadata.modified() {
-                if let Ok(duration) = modified.duration_since(std::time::UNIX_EPOCH) {
-                    meta_data.insert("file_modified".to_string(), duration.as_secs().to_string());
-                }
+                let datetime: DateTime<Utc> = modified.into();
+                let iso_string = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+                meta_data.insert(MetaDataField::FileModified, iso_string);
             }
 
             meta_data.insert(
-                "file_readonly".to_string(),
+                MetaDataField::FileReadOnly,
                 metadata.permissions().readonly().to_string(),
             );
 
             if let Some(file_name) = Path::new(&self.path).file_name() {
                 if let Some(name_str) = file_name.to_str() {
-                    meta_data.insert("file_file_name".to_string(), name_str.to_string());
+                    meta_data.insert(MetaDataField::FileName, name_str.to_string());
                 }
             }
 
             if let Some(extension) = Path::new(&self.path).extension() {
                 if let Some(ext_str) = extension.to_str() {
-                    meta_data.insert("file_file_extension".to_string(), ext_str.to_string());
+                    meta_data.insert(MetaDataField::FileExtension, ext_str.to_string());
                 }
             }
 

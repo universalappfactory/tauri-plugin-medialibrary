@@ -41,7 +41,7 @@ export interface ImageInfo {
   path: string;
   contentUri: string;
   mimeType: string;
-  metaData?: Record<string, string>;
+  metaData?: Record<MetadataField, string>;
 }
 
 export interface GetImagesResult {
@@ -120,12 +120,15 @@ export enum SortColumn {
 }
 
 export type MetadataField =
-  | "file_file_size"
-  | "file_created"
-  | "file_modified"
-  | "file_readonly"
-  | "file_file_name"
-  | "file_file_extension";
+  | "dateAdded"
+  | "dateModified"
+  | "dateTaken"
+  | "fileCreated"
+  | "fileModified"
+  | "fileSize"
+  | "fileName"
+  | "fileExtension"
+  | "fileReadOnly";
 
 export async function getAvailableSources(): Promise<
   MediaLibrarySource[] | null
@@ -141,4 +144,14 @@ export async function requestPermissions(
     args: request,
   });
   return result as PermissionResponse;
+}
+
+export function getMetaData(item: ImageInfo, field: MetadataField) {
+  if (item.metaData) {
+    return item.metaData[field];
+  }
+}
+
+export function hasMetaData(item: ImageInfo, field: MetadataField) {
+  return item.metaData && field in item.metaData;
 }
