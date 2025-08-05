@@ -58,6 +58,7 @@ export interface GetLibraryContentRequest {
   source: MediaLibrarySource;
   sortColumn?: SortColumn;
   sortDirection?: SortDirection;
+  includeFileMetadata?: boolean;
 }
 
 export interface GetPermissionsRequest {
@@ -117,6 +118,14 @@ export enum SortColumn {
   DateModified = "DateModified",
   DateTaken = "DateTaken",
 }
+
+export type MetadataField =
+  | "file_file_size"
+  | "file_created"
+  | "file_modified"
+  | "file_readonly"
+  | "file_file_name"
+  | "file_file_extension";
 
 export async function getAvailableSources(): Promise<
   MediaLibrarySource[] | null
