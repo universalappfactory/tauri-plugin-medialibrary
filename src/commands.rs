@@ -21,10 +21,7 @@ pub(crate) async fn get_images<R: Runtime>(
         return Err(Error::MediaLibrarySourceForbidden(request.source));
     }
 
-    let include_file_metadata = match request.include_file_metadata {
-        Some(include) => include,
-        None => false,
-    };
+    let include_file_metadata = request.include_file_metadata.unwrap_or_default();
 
     match app.medialibrary().get_images(request) {
         Ok(images) => Ok(images.with_file_metadata(include_file_metadata)),
