@@ -1,5 +1,10 @@
 # Changelog
 
+## \[0.8.0]
+
+- [`1cf0213`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/1cf02130d572df5a567dabc65623140e5d03e958) -   updated tauri to 2.8.5
+  - updated tauri-plugin to 2.4.0
+
 ## \[0.7.0]
 
 - [`b492bda`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/b492bdaef95593c636f9eb2317322153995f7693) -   Added additional metadata fields with data from the media file itself
