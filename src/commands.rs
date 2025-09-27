@@ -67,3 +67,8 @@ pub(crate) async fn get_available_sources<R: Runtime>(
 
     Ok(allowed_sources)
 }
+
+#[command]
+pub(crate) async fn delete_image<R: Runtime>(app: AppHandle<R>, uri: String) -> Result<()> {
+    return app.medialibrary().delete_image(uri.into());
+}

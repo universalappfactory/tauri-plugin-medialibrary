@@ -4,6 +4,7 @@ const COMMANDS: &[&str] = &[
     "get_available_sources",
     "request_permissions",
     "get_image",
+    "delete_image",
 ];
 
 #[derive(schemars::JsonSchema)]

@@ -93,6 +93,14 @@ export async function getImage(contentUri: string): Promise<ImageInfo | null> {
   });
 }
 
+export async function deleteImage(contentUri: string): Promise<void> {
+  return await invokeCommand<void>(async () => {
+    return await invoke("plugin:medialibrary|delete_image", {
+      uri: contentUri,
+    });
+  });
+}
+
 export async function getThumbnail(
   uri: string,
 ): Promise<GetThumbnailResponse | null> {

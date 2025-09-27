@@ -1,5 +1,6 @@
 package de.universalappfactory.medialibrary
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
@@ -22,7 +23,10 @@ enum class MediaLibrarySource {
     VolumeExternalPrimary
 }
 
-class MediaLibrary(private val contentResolver: ContentResolver) {
+class MediaLibrary(
+        private val contentResolver: ContentResolver,
+        private val activity: Activity? = null
+) {
 
     companion object {
         private const val TAG = "MediaLibrary"
@@ -261,5 +265,23 @@ class MediaLibrary(private val contentResolver: ContentResolver) {
             Log.e(TAG, "Failed to get image info for URI: $contentUriString", e)
         }
         return null
+    }
+
+    fun deleteImage(contentUriString: String): JSObject {
+        val uri = Uri.parse(contentUriString)
+        val ret = JSObject()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // First try direct deletion (works for files owned by this app)
+            val deletedRows = contentResolver.delete(uri, null, null)
+            if (deletedRows > 0) {
+                ret.put("success", true)
+                return ret
+            } else {
+                ret.put("success", false)
+                return ret
+            }
+        }
+        throw Exception("Failed to delete image")
     }
 }

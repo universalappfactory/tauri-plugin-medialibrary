@@ -67,7 +67,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::get_thumbnail,
             commands::get_available_sources,
             commands::request_permissions,
-            commands::get_image
+            commands::get_image,
+            commands::delete_image
         ])
         .setup(|app, api| {
             #[cfg(mobile)]

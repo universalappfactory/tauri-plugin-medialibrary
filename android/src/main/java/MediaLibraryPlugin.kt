@@ -3,9 +3,13 @@ package de.universalappfactory.medialibrary
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.RecoverableSecurityException
 import android.net.Uri
 import android.os.Build
-import android.util.Log
+import android.provider.MediaStore
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
+import app.tauri.annotation.ActivityCallback
 import app.tauri.annotation.Command
 import app.tauri.annotation.Permission
 import app.tauri.annotation.PermissionCallback
@@ -38,12 +42,18 @@ private const val MEDIA_IMAGES_ALIAS = "readMediaImages"
 class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
 
     private var requestPermissionResponse: JSObject? = null
+    private var deleteRequestInvoke: Invoke? = null
+
+    companion object {
+        private const val DELETE_REQUEST_CODE = 1001
+        private const val RECOVERABLE_DELETE_REQUEST_CODE = 1002
+    }
 
     @Command
     fun getImages(invoke: Invoke) {
         val args = invoke.parseArgs(GetImagesArgs::class.java)
 
-        val mediaLibaray = MediaLibrary(activity.contentResolver)
+        val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
 
         val ret = JSObject()
         ret.put("items", JSArray(mediaLibaray.getAllImages(args)))
@@ -54,9 +64,44 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
     fun getImage(invoke: Invoke) {
         val args = invoke.parseArgs(GetImageArgs::class.java)
 
-        val mediaLibaray = MediaLibrary(activity.contentResolver)
+        val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
         val ret = mediaLibaray.getImage(args.uri)
         invoke.resolve(ret)
+    }
+
+    @Command
+    fun executeRecoverableDeleteRequest(invoke: Invoke) {
+        val args = invoke.parseArgs(DeleteImageArgs::class.java)
+        try {
+            val uri = Uri.parse(args.uri)
+
+            try {
+                val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
+                val result = mediaLibaray.deleteImage(args.uri)
+                invoke.resolve(result)
+            } catch (securityException: RecoverableSecurityException) {
+                val urisToDelete = listOf(uri)
+                val pendingIntent =
+                        MediaStore.createDeleteRequest(activity.contentResolver, urisToDelete)
+
+                val request = IntentSenderRequest.Builder(pendingIntent.getIntentSender()).build()
+                startIntentSenderForResult(invoke, request, "deleteActivityResult")
+            }
+        } catch (e: Exception) {
+            invoke.reject("Failed to handle recoverable delete request: ${e.message}")
+        }
+    }
+
+    @ActivityCallback
+    fun deleteActivityResult(invoke: Invoke, result: ActivityResult) {
+        val resultCode = result.resultCode
+        if (resultCode == Activity.RESULT_CANCELED) {
+            invoke.reject(
+                    "deleteActivityResult canceled",
+            )
+        } else {
+            invoke.resolve()
+        }
     }
 
     @Command
@@ -64,7 +109,7 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
         val args = invoke.parseArgs(GetThumbnailArgs::class.java)
 
         // requestPermissions(invoke)
-        val mediaLibaray = MediaLibrary(activity.contentResolver)
+        val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
 
         val uri = Uri.parse(args.uri)
         val content = mediaLibaray.getThumbnailAsBase64(uri)

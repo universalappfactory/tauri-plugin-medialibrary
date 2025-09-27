@@ -14,6 +14,32 @@ Default permissions for the plugin
 <tr>
 <td>
 
+`medialibrary:allow-delete-image`
+
+</td>
+<td>
+
+Enables the delete_image command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`medialibrary:deny-delete-image`
+
+</td>
+<td>
+
+Denies the delete_image command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `medialibrary:allow-get-available-sources`
 
 </td>

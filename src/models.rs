@@ -96,6 +96,18 @@ impl From<String> for GetImageRequest {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct DeleteImageRequest {
+    pub uri: String,
+}
+
+impl From<String> for DeleteImageRequest {
+    fn from(uri: String) -> Self {
+        DeleteImageRequest { uri }
+    }
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct RequestPermissionsArgs {
     pub source: MediaLibrarySource,
 }
