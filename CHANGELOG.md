@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.9.0]
+
+- [`0dfb523`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/0dfb523a2a43e307e38d38a822b96a049c82e2a2) -   Added a delete_command in order to provide a way to remove media files from the library.
+
 ## \[0.8.0]
 
 - [`1cf0213`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/1cf02130d572df5a567dabc65623140e5d03e958) -   updated tauri to 2.8.5
