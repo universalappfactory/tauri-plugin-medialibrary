@@ -38,3 +38,8 @@ class RequestPermissionArgs(val source: String) {
 class GetImageArgs(val uri: String) {
     constructor() : this("")
 }
+
+@InvokeArg
+class DeleteImageArgs(val uri: String) {
+    constructor() : this("")
+}
