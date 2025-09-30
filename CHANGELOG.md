@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.10.0]
+
+- [`a0ab3ce`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/a0ab3cea351ed9f6b53229a357ae537e7bec1427) -   Added a windows implementation in order to read the windows picture directory
+
 ## \[0.9.0]
 
 - [`0dfb523`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/0dfb523a2a43e307e38d38a822b96a049c82e2a2) -   Added a delete_command in order to provide a way to remove media files from the library.
