@@ -3,7 +3,7 @@
 | Platform | Supported |
 | -------- | --------- |
 | Linux    | ✓         |
-| Windows  | x         |
+| Windows  | ✓         |
 | macOS    | x         |
 | Android  | ✓         |
 | iOS      | x         |
@@ -23,7 +23,19 @@ On Linux it reads pictures from the XDG_PICTURE directory.
 
 ## Windows
 
-Not implemented yet
+On windows it uses the:
+```
+https://tauri.app/reference/javascript/api/namespacepath/#picturedir
+```
+
+### Thumbnails
+
+Thumbnails can be read using the https://crates.io/crates/thumbcache crate.
+When using thumbcache, you have to use the `thumb_cache` feature
+
+```
+cargo build --features thumb_cache
+```
 
 ## IOs
 

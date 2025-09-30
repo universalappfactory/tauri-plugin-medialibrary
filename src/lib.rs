@@ -17,12 +17,18 @@ mod directory_reader;
 mod error;
 mod models;
 mod scope;
+
 mod thumbnail_provider;
 mod uri;
+#[cfg(feature = "xdg")]
 mod xdg_thumbnail_provider;
-
-#[cfg(target_os = "linux")]
+#[cfg(feature = "xdg")]
 mod xdg_directory_reader;
+
+#[cfg(feature = "thumb_cache")]
+mod thumbcache_thumbnail_provider;
+mod path_reader;
+
 
 pub use error::{Error, Result};
 
