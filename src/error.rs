@@ -21,7 +21,7 @@ pub enum Error {
     #[cfg(mobile)]
     #[error(transparent)]
     PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),
-    #[error("allmytoes error: {0}")]
+    #[error("amytoes error: {0}")]
     AllMyToes(String),
     #[error("cannot parse uri: {0}")]
     ParseUriError(String),
