@@ -17,12 +17,19 @@ mod directory_reader;
 mod error;
 mod models;
 mod scope;
+
 mod thumbnail_provider;
 mod uri;
+#[cfg(feature = "xdg")]
 mod xdg_thumbnail_provider;
-
-#[cfg(target_os = "linux")]
+#[cfg(feature = "xdg")]
 mod xdg_directory_reader;
+
+#[cfg(target_os = "windows")]
+mod windows_thumbnail_provider;
+#[cfg(target_os = "windows")]
+mod windows_directory_reader;
+
 
 pub use error::{Error, Result};
 

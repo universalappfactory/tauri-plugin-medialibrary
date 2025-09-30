@@ -6,6 +6,13 @@ use crate::{
     directory_reader::DirectoryReader, thumbnail_provider::ThumbnailProvider,
     xdg_directory_reader::XdgDirectoryReader, xdg_thumbnail_provider::XdgThumbnailProvider,
 };
+#[cfg(target_os = "windows")]
+use crate::{
+    directory_reader::DirectoryReader, thumbnail_provider::ThumbnailProvider,
+    windows_directory_reader::PathReader, windows_thumbnail_provider::WindowsThumbnailProvider,
+};
+
+
 use crate::{models::*, uri::uri_to_path};
 
 pub fn init<R: Runtime, C: DeserializeOwned>(
@@ -22,6 +29,18 @@ impl<R: Runtime> Medialibrary<R> {
     pub fn get_images(&self, request: GetLibraryContentRequest) -> crate::Result<GetImagesResult> {
         #[cfg(target_os = "linux")]
         return XdgDirectoryReader::read_directory(&request);
+        #[cfg(target_os = "windows")]
+        {
+            use tauri::Manager;
+
+            match self.0.path().picture_dir() {
+                Ok(path) => {
+                    let reader = PathReader::new(&path);
+                    return reader.read_directory(&request);
+                },
+                Err(e) => Err(e.into()),
+            }
+        }
     }
 
     pub fn get_image(&self, _request: GetImageRequest) -> crate::Result<Option<ImageInfo>> {
@@ -54,6 +73,8 @@ impl<R: Runtime> Medialibrary<R> {
             Ok(path) => {
                 #[cfg(target_os = "linux")]
                 return XdgThumbnailProvider::get_thumbnail(&path);
+                #[cfg(target_os = "windows")]
+                return WindowsThumbnailProvider::get_thumbnail(&path);
             }
             Err(err) => Err(err),
         }
