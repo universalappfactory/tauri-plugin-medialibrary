@@ -9,7 +9,7 @@ use crate::{
 #[cfg(target_os = "windows")]
 use crate::{
     directory_reader::DirectoryReader, thumbnail_provider::ThumbnailProvider,
-    windows_directory_reader::PathReader, windows_thumbnail_provider::WindowsThumbnailProvider,
+    path_reader::PathReader, windows_thumbnail_provider::WindowsThumbnailProvider,
 };
 
 
@@ -27,12 +27,11 @@ pub struct Medialibrary<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> Medialibrary<R> {
     pub fn get_images(&self, request: GetLibraryContentRequest) -> crate::Result<GetImagesResult> {
-        #[cfg(target_os = "linux")]
+        #[cfg(feature = "xdg")]
         return XdgDirectoryReader::read_directory(&request);
-        #[cfg(target_os = "windows")]
+        #[cfg(not(feature = "xdg"))]
         {
             use tauri::Manager;
-
             match self.0.path().picture_dir() {
                 Ok(path) => {
                     let reader = PathReader::new(&path);

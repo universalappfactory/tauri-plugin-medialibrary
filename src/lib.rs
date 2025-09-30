@@ -27,8 +27,7 @@ mod xdg_directory_reader;
 
 #[cfg(target_os = "windows")]
 mod windows_thumbnail_provider;
-#[cfg(target_os = "windows")]
-mod windows_directory_reader;
+mod path_reader;
 
 
 pub use error::{Error, Result};
