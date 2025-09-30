@@ -19,6 +19,8 @@ fluent-uri = "0.1.4"
 chrono = "0.4.41"
 allmytoes = { version = "0.4.0", optional = true }
 xdg-user = { version = "0.2.1", optional = true }
+thumbcache = { version = "0.4.0", optional = true }
+
 
 [build-dependencies]
 schemars = "0.8.22"
@@ -27,3 +29,4 @@ tauri-plugin = { version = "2.4.0", features = ["build"] }
 [features]
 default = []
 xdg = ["allmytoes", "xdg-user"]
+thumb_cache = ["thumbcache"]

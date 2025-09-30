@@ -1,15 +1,18 @@
+use log::{trace,warn};
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
-#[cfg(target_os = "linux")]
+use crate::path_reader::PathReader;
+use crate::directory_reader::DirectoryReader;
+use crate::thumbnail_provider::ThumbnailProvider;
+
+#[cfg(feature = "xdg")]
 use crate::{
-    directory_reader::DirectoryReader, thumbnail_provider::ThumbnailProvider,
     xdg_directory_reader::XdgDirectoryReader, xdg_thumbnail_provider::XdgThumbnailProvider,
 };
-#[cfg(target_os = "windows")]
+#[cfg(feature = "thumb_cache")]
 use crate::{
-    directory_reader::DirectoryReader, thumbnail_provider::ThumbnailProvider,
-    path_reader::PathReader, windows_thumbnail_provider::WindowsThumbnailProvider,
+    thumbcache_thumbnail_provider::ThumbCacheThumbnailProvider,
 };
 
 
@@ -70,10 +73,16 @@ impl<R: Runtime> Medialibrary<R> {
     pub async fn get_thumbnail(&self, uri: String) -> crate::Result<GetThumbnailResponse> {
         match uri_to_path(&uri) {
             Ok(path) => {
-                #[cfg(target_os = "linux")]
+                #[cfg(feature = "xdg")]
                 return XdgThumbnailProvider::get_thumbnail(&path);
-                #[cfg(target_os = "windows")]
-                return WindowsThumbnailProvider::get_thumbnail(&path);
+                #[cfg(feature = "thumb_cache")]
+                return ThumbCacheThumbnailProvider::get_thumbnail(&path);
+
+                #[cfg(all(not(feature = "xdg"), not(feature = "thumb_cache")))]
+                {
+                    warn!("no thumbnail provider used for: {:?}", path);
+                    return Ok(GetThumbnailResponse{content: String::new()})
+                }
             }
             Err(err) => Err(err),
         }

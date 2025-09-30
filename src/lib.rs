@@ -25,8 +25,8 @@ mod xdg_thumbnail_provider;
 #[cfg(feature = "xdg")]
 mod xdg_directory_reader;
 
-#[cfg(target_os = "windows")]
-mod windows_thumbnail_provider;
+#[cfg(feature = "thumb_cache")]
+mod thumbcache_thumbnail_provider;
 mod path_reader;
 
 
