@@ -3,17 +3,22 @@ on:
   push:
 
 jobs:
-  publish-tauri:
+  build:
     permissions:
       contents: write
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         platform: [ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg libwebkit2gtk-4.1-0 libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libjavascriptcoregtk-4.1-dev libsoup-3.0-common
       - name: cargo build
         run: cargo build
       - name: cargo test
