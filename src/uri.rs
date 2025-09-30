@@ -2,11 +2,9 @@ use fluent_uri::Uri;
 use std::path::PathBuf;
 
 use crate::Error;
-use log::{trace,error};
+use log::{error, trace};
 
 pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
-
-
     #[cfg(target_os = "windows")]
     let uri = &uri.replace("\\", "/");
 
@@ -21,17 +19,15 @@ pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
             }
             _ => Err(Error::InvalidUriScheme(uri.to_string())),
         },
-        Err(err) => Err(Error::ParseUriError(format!(
-            "uri: {uri}, {err}"
-        ))),
+        Err(err) => Err(Error::ParseUriError(format!("uri: {uri}, {err}"))),
     }
 }
 
-fn get_authority_as_string(input: &Uri<&str>) -> String
-{
+#[cfg(target_os = "windows")]
+fn get_authority_as_string(input: &Uri<&str>) -> String {
     match input.authority() {
         Some(authority) => authority.to_string(),
-        None => String::new()
+        None => String::new(),
     }
 }
 
@@ -40,7 +36,11 @@ pub fn uri_to_path(uri: &str) -> crate::Result<std::path::PathBuf> {
     match parse_uri(uri) {
         Ok(uri) => {
             #[cfg(target_os = "windows")]
-            let path =format!("{}{}", get_authority_as_string(uri.borrow()), uri.path().to_string().replace("/", "\\"));
+            let path = format!(
+                "{}{}",
+                get_authority_as_string(uri.borrow()),
+                uri.path().to_string().replace("/", "\\")
+            );
 
             #[cfg(not(target_os = "windows"))]
             let path = uri.path().to_string();
@@ -49,22 +49,20 @@ pub fn uri_to_path(uri: &str) -> crate::Result<std::path::PathBuf> {
         Err(e) => {
             error!("err: {}", e);
             Err(e)
-        },
+        }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
     use crate::uri::uri_to_path;
 
-
     #[test]
-    pub fn test_uri_to_path_for_windows_path()
-    {
+    pub fn test_uri_to_path_for_windows_path() {
         let r = uri_to_path("file://C:/Users/Test/Pictures/my_file.jpg").unwrap();
-        assert_eq!(r.to_str().unwrap(), "C:\\Users\\Test\\Pictures\\my_file.jpg");
+        assert_eq!(
+            r.to_str().unwrap(),
+            "C:\\Users\\Test\\Pictures\\my_file.jpg"
+        );
     }
-
-    
 }

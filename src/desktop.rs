@@ -1,20 +1,20 @@
-use log::{trace,warn};
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
-use crate::path_reader::PathReader;
 use crate::directory_reader::DirectoryReader;
+#[cfg(not(feature = "xdg"))]
+use crate::path_reader::PathReader;
 use crate::thumbnail_provider::ThumbnailProvider;
 
+#[cfg(all(not(feature = "thumb_cache"), not(feature = "xdg")))]
+use crate::thumbnail_provider::EmptyThumbnailProvider;
+
+#[cfg(feature = "thumb_cache")]
+use crate::thumbcache_thumbnail_provider::ThumbCacheThumbnailProvider;
 #[cfg(feature = "xdg")]
 use crate::{
     xdg_directory_reader::XdgDirectoryReader, xdg_thumbnail_provider::XdgThumbnailProvider,
 };
-#[cfg(feature = "thumb_cache")]
-use crate::{
-    thumbcache_thumbnail_provider::ThumbCacheThumbnailProvider,
-};
-
 
 use crate::{models::*, uri::uri_to_path};
 
@@ -31,7 +31,10 @@ pub struct Medialibrary<R: Runtime>(AppHandle<R>);
 impl<R: Runtime> Medialibrary<R> {
     pub fn get_images(&self, request: GetLibraryContentRequest) -> crate::Result<GetImagesResult> {
         #[cfg(feature = "xdg")]
-        return XdgDirectoryReader::read_directory(&request);
+        {
+            let reader = XdgDirectoryReader;
+            return reader.read_directory(&request);
+        }
         #[cfg(not(feature = "xdg"))]
         {
             use tauri::Manager;
@@ -39,7 +42,7 @@ impl<R: Runtime> Medialibrary<R> {
                 Ok(path) => {
                     let reader = PathReader::new(&path);
                     return reader.read_directory(&request);
-                },
+                }
                 Err(e) => Err(e.into()),
             }
         }
@@ -78,11 +81,8 @@ impl<R: Runtime> Medialibrary<R> {
                 #[cfg(feature = "thumb_cache")]
                 return ThumbCacheThumbnailProvider::get_thumbnail(&path);
 
-                #[cfg(all(not(feature = "xdg"), not(feature = "thumb_cache")))]
-                {
-                    warn!("no thumbnail provider used for: {:?}", path);
-                    return Ok(GetThumbnailResponse{content: String::new()})
-                }
+                #[cfg(all(not(feature = "thumb_cache"), not(feature = "xdg")))]
+                EmptyThumbnailProvider::get_thumbnail(&path)
             }
             Err(err) => Err(err),
         }
