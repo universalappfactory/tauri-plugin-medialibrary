@@ -2,11 +2,10 @@ use crate::{
     directory_reader::DirectoryReader, Error, GetImagesResult, GetLibraryContentRequest, ImageInfo,
     MediaLibrarySource,
 };
-use std::{fs, path::{Path}};
 use log::trace;
-pub struct PathReader<'a>
-{
-    path: &'a Path
+use std::{fs, path::Path};
+pub struct PathReader<'a> {
+    path: &'a Path,
 }
 
 impl<'a> PathReader<'a> {
@@ -17,11 +16,10 @@ impl<'a> PathReader<'a> {
 
 impl<'a> DirectoryReader for PathReader<'a> {
     fn read_directory(&self, request: &GetLibraryContentRequest) -> Result<GetImagesResult, Error> {
-        trace!("windows read_directory: {:?}", self.path);
         match &request.source {
-            MediaLibrarySource::PictureDir => { 
+            #[cfg(not(target_os = "android"))]
+            MediaLibrarySource::PictureDir => {
                 let mut items = Vec::new();
-
 
                 if let Ok(entries) = fs::read_dir(self.path) {
                     let mut all_entries: Vec<_> = entries.flatten().collect();
@@ -66,6 +64,8 @@ impl<'a> DirectoryReader for PathReader<'a> {
                 }
                 Ok(GetImagesResult { items })
             }
+            #[cfg(target_os = "android")]
+            _ => Ok(GetImagesResult { items: Vec::new() }),
         }
     }
 }

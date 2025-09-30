@@ -20,7 +20,7 @@ impl ThumbnailProvider for XdgThumbnailProvider {
 
                 Ok(GetThumbnailResponse { content })
             }
-            Err(error) => Err(Error::AllMyToes(format!("a error: {error:?}"))),
+            Err(error) => Err(Error::AllMyToes(format!("get_thumbnail error: {error:?}"))),
         }
     }
 }

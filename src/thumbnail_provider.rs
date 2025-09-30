@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use log::warn;
+
 use crate::GetThumbnailResponse;
 
 pub trait ThumbnailProvider {
@@ -10,6 +12,7 @@ pub struct EmptyThumbnailProvider;
 
 impl ThumbnailProvider for EmptyThumbnailProvider {
     fn get_thumbnail(_path: &Path) -> crate::Result<GetThumbnailResponse> {
+        warn!("using EmptyThumbnailProvider");
         Ok(GetThumbnailResponse::default())
     }
 }
