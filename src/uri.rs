@@ -60,9 +60,13 @@ mod tests {
     #[test]
     pub fn test_uri_to_path_for_windows_path() {
         let r = uri_to_path("file://C:/Users/Test/Pictures/my_file.jpg").unwrap();
+
+        #[cfg(target_os = "windows")]
         assert_eq!(
             r.to_str().unwrap(),
             "C:\\Users\\Test\\Pictures\\my_file.jpg"
         );
+        #[cfg(not(target_os = "windows"))]
+        assert_eq!(r.to_str().unwrap(), "/Users/Test/Pictures/my_file.jpg");
     }
 }
