@@ -1,12 +1,16 @@
 [package]
 name = "tauri-plugin-medialibrary"
-version = "0.1.0"
+version = "0.10.0"
 authors = ["Dirk Lehmeier"]
-description = ""
 edition = "2021"
 rust-version = "1.77.2"
 exclude = ["/examples", "/dist-js", "/guest-js", "/node_modules"]
 links = "tauri-plugin-medialibrary"
+license-file = "LICENSE"
+keywords = ["tauri", "media", "medialibrary", "contentprovider"]
+repository = "https://github.com/universalappfactory/tauri-plugin-medialibrary"
+description = "A tauri plugin to access the systems media library (e.g. the android medialibrary)"
+
 
 [dependencies]
 tauri = { version = "2.8.5" }
