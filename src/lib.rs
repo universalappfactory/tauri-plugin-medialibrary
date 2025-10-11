@@ -21,14 +21,13 @@ mod scope;
 mod thumbnail_provider;
 mod uri;
 #[cfg(feature = "xdg")]
-mod xdg_thumbnail_provider;
-#[cfg(feature = "xdg")]
 mod xdg_directory_reader;
+#[cfg(feature = "xdg")]
+mod xdg_thumbnail_provider;
 
 #[cfg(feature = "thumb_cache")]
 mod thumbcache_thumbnail_provider;
-mod path_reader;
-
+mod walkdir_reader;
 
 pub use error::{Error, Result};
 

@@ -2,9 +2,9 @@ use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
 use crate::directory_reader::DirectoryReader;
-#[cfg(not(feature = "xdg"))]
-use crate::path_reader::PathReader;
 use crate::thumbnail_provider::ThumbnailProvider;
+#[cfg(not(feature = "xdg"))]
+use crate::walkdir_reader::WalkdirReader;
 
 #[cfg(all(not(feature = "thumb_cache"), not(feature = "xdg")))]
 use crate::thumbnail_provider::EmptyThumbnailProvider;
@@ -40,8 +40,8 @@ impl<R: Runtime> Medialibrary<R> {
             use tauri::Manager;
             match self.0.path().picture_dir() {
                 Ok(path) => {
-                    let reader = PathReader::new(&path);
-                    return reader.read_directory(&request);
+                    let reader = WalkdirReader::new(&path);
+                    reader.read_directory(&request)
                 }
                 Err(e) => Err(e.into()),
             }
