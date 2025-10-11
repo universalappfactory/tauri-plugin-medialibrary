@@ -40,6 +40,13 @@ jobs:
       - name: cargo login
         run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
 
+      - name: Setup target dir on /mnt
+        # This directory has a larger partition size
+        run: |
+          sudo mkdir /mnt/target
+          WORKSPACE_OWNER="$(stat -c '%U:%G' "${GITHUB_WORKSPACE}")"
+          sudo chown -R "${WORKSPACE_OWNER}" /mnt/target
+
       - name: covector version or publish (publish when no change files present)
         uses: jbolda/covector/packages/action@covector-v0
         id: covector
