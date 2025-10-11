@@ -49,8 +49,8 @@ Install the Core plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-# cargo crate is not ready yet
-# tauri-plugin-medialibrary = "0.2.1"
+# cargo crate
+tauri-plugin-medialibrary = "0.12.0"
 # alternatively with Git:
 tauri-plugin-medialibrary = { git = "https://github.com/universalappfactory/tauri-plugin-medialibrary" }
 ```
