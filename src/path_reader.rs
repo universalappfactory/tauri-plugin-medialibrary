@@ -2,7 +2,7 @@ use crate::{
     directory_reader::DirectoryReader, Error, GetImagesResult, GetLibraryContentRequest, ImageInfo,
     MediaLibrarySource,
 };
-use log::trace;
+
 use std::{fs, path::Path};
 pub struct PathReader<'a> {
     path: &'a Path,
