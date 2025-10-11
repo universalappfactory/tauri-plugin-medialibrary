@@ -41,7 +41,7 @@ impl<R: Runtime> Medialibrary<R> {
             match self.0.path().picture_dir() {
                 Ok(path) => {
                     let reader = WalkdirReader::new(&path);
-                    return reader.read_directory(&request);
+                    reader.read_directory(&request)
                 }
                 Err(e) => Err(e.into()),
             }
