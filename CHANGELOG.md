@@ -2,6 +2,10 @@
 
 ## \[0.11.0]
 
+- [`253f82c`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/253f82c21ac56ced9467f223db0d5373aacb56eb) -   use a correct changes.md file in order to publish the crate
+
+## \[0.11.0]
+
 - [`bfb16bc`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/bfb16bcf3469eeb77260715b7924b189fc1dfb7c) -   use the walkdir crate when reading directories
 
   ***
