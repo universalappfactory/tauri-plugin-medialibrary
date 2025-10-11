@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.12.0]
+
+- [`9d0fea7`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/9d0fea70e25ca8906d072382907aba48f5617145) -   fixed build
+
 ## \[0.11.0]
 
 - [`253f82c`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/253f82c21ac56ced9467f223db0d5373aacb56eb) -   use a correct changes.md file in order to publish the crate
