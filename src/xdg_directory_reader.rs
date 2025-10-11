@@ -1,5 +1,5 @@
 use crate::{
-    directory_reader::DirectoryReader, path_reader::PathReader, Error, GetImagesResult,
+    directory_reader::DirectoryReader, walkdir_reader::WalkdirReader, Error, GetImagesResult,
     GetLibraryContentRequest, MediaLibrarySource,
 };
 
@@ -21,7 +21,7 @@ impl DirectoryReader for XdgDirectoryReader {
                 }
                 .ok_or_else(|| Error::MediaLibrarySourceForbidden(request.source.clone()))?;
 
-                let reader = PathReader::new(&pictures_dir);
+                let reader = WalkdirReader::new(&pictures_dir);
                 reader.read_directory(request)
             }
         }
