@@ -1,6 +1,6 @@
 {
   "name": "@universalappfactory/tauri-plugin-medialibrary",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "author": "Dirk Lehmeier",
   "description": "A tauri plugin to access the systems media library (e.g. the android medialibrary)",
   "type": "module",

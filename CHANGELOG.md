@@ -1,5 +1,16 @@
 # Changelog
 
+## \[0.11.0]
+
+- [`bfb16bc`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/bfb16bcf3469eeb77260715b7924b189fc1dfb7c) -   use the walkdir crate when reading directories
+
+  ***
+
+  ## "tauri-plugin-medialibrary": minor
+
+  - first build for crates.io
+  - use the walkdir crate when reading directories
+
 ## \[0.10.0]
 
 - [`a0ab3ce`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/a0ab3cea351ed9f6b53229a357ae537e7bec1427) -   Added a windows implementation in order to read the windows picture directory
