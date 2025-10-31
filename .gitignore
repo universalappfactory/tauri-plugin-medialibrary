@@ -17,3 +17,4 @@ dist-js
 dist
 examples/tauri-app
 covector_template.md
+src/target/rust-analyzer/**

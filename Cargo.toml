@@ -13,7 +13,7 @@ description = "A tauri plugin to access the systems media library (e.g. the andr
 
 
 [dependencies]
-tauri = { version = "2.8.5" }
+tauri = { version = "2.9.2" }
 thiserror = "2"
 log = "0.4.26"
 serde = "1.0.219"
@@ -29,7 +29,7 @@ walkdir = "2.5.0"
 
 [build-dependencies]
 schemars = "0.8.22"
-tauri-plugin = { version = "2.4.0", features = ["build"] }
+tauri-plugin = { version = "2.5.1", features = ["build"] }
 
 [features]
 default = []
