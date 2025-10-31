@@ -5,9 +5,9 @@ use std::path::Path;
 
 use crate::{thumbnail_provider::ThumbnailProvider, Error, GetThumbnailResponse};
 
-pub struct XdgThumbnailProvider;
+pub struct AmtThumbnailProvider;
 
-impl ThumbnailProvider for XdgThumbnailProvider {
+impl ThumbnailProvider for AmtThumbnailProvider {
     fn get_thumbnail(path: &Path) -> crate::Result<GetThumbnailResponse> {
         let configuration = AMTConfiguration::default();
         let amt = AMT::new(&configuration);

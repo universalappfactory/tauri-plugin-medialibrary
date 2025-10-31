@@ -6,15 +6,16 @@ use crate::thumbnail_provider::ThumbnailProvider;
 #[cfg(not(feature = "xdg"))]
 use crate::walkdir_reader::WalkdirReader;
 
-#[cfg(all(not(feature = "thumb_cache"), not(feature = "xdg")))]
+#[cfg(all(not(feature = "thumb_cache"), not(feature = "amt")))]
 use crate::thumbnail_provider::EmptyThumbnailProvider;
 
 #[cfg(feature = "thumb_cache")]
 use crate::thumbcache_thumbnail_provider::ThumbCacheThumbnailProvider;
 #[cfg(feature = "xdg")]
-use crate::{
-    xdg_directory_reader::XdgDirectoryReader, xdg_thumbnail_provider::XdgThumbnailProvider,
-};
+use crate::xdg_directory_reader::XdgDirectoryReader;
+
+#[cfg(feature = "amt")]
+use crate::amt_thumbnail_provider::AmtThumbnailProvider;
 
 use crate::{models::*, uri::uri_to_path};
 
@@ -76,12 +77,12 @@ impl<R: Runtime> Medialibrary<R> {
     pub async fn get_thumbnail(&self, uri: String) -> crate::Result<GetThumbnailResponse> {
         match uri_to_path(&uri) {
             Ok(path) => {
-                #[cfg(feature = "xdg")]
-                return XdgThumbnailProvider::get_thumbnail(&path);
+                #[cfg(feature = "amt")]
+                return AmtThumbnailProvider::get_thumbnail(&path);
                 #[cfg(feature = "thumb_cache")]
                 return ThumbCacheThumbnailProvider::get_thumbnail(&path);
 
-                #[cfg(all(not(feature = "thumb_cache"), not(feature = "xdg")))]
+                #[cfg(all(not(feature = "thumb_cache"), not(feature = "amt")))]
                 EmptyThumbnailProvider::get_thumbnail(&path)
             }
             Err(err) => Err(err),

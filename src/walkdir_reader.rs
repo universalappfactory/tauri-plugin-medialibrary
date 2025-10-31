@@ -118,6 +118,8 @@ fn sort_entries(
         Some(sort_column) => match sort_column {
             crate::SortColumn::DateModified => a_modified.cmp(b_modified),
             crate::SortColumn::DateAdded => a_created.cmp(b_created),
+            #[cfg(target_os = "android")]
+            crate::SortColumn::DateTaken => Ordering::Equal,
         },
         None => Ordering::Equal,
     };

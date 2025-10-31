@@ -15,7 +15,6 @@ impl ThumbnailProvider for ThumbCacheThumbnailProvider {
             thumbcache::ThumbSize::S96,
         ) {
             Ok(bmp) => {
-                trace!("yo");
                 let content = general_purpose::STANDARD.encode(&bmp);
                 Ok(GetThumbnailResponse { content })
             }
