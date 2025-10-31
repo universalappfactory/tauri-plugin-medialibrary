@@ -4,22 +4,30 @@ use std::path::PathBuf;
 use urlencoding::{decode, encode};
 
 use crate::Error;
+use regex::Regex;
 
 fn with_encoded_path(uri: &str) -> String {
-    match uri.rfind('/') {
-        Some(pos) => {
-            let (prefix, last_segment) = uri.split_at(pos + 1);
-            format!("{}{}", prefix, encode(last_segment).into_owned())
-        }
-        None => encode(uri).into_owned(),
+    let re = Regex::new(r"^(?P<scheme>[^:/?#]+://)?(?P<host>[^/?#]+)(?P<path>/?.*)$").unwrap();
+
+    if let Some(caps) = re.captures(uri) {
+        let scheme = caps.name("scheme").map_or("", |m| m.as_str());
+        let host = caps["host"].to_string();
+        let path = &caps["path"];
+        
+        let encoded_path = path.split('/')
+            .map(|segment| encode(segment).into_owned())  // Encode each segment
+            .collect::<Vec<String>>()
+            .join("/"); 
+
+        format!("{}{}{}", scheme, host, encoded_path)
+    } else {
+        encode(uri).into_owned()
     }
 }
 
 pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
-    #[cfg(target_os = "windows")]
-    let uri = &uri.replace("\\", "/");
+    let uri = with_encoded_path(&uri.replace("\\", "/"));
 
-    let uri = with_encoded_path(uri);
     match Uri::parse(uri.as_bytes()) {
         Ok(uri) => match uri.scheme() {
             Some(scheme) => {
@@ -31,7 +39,7 @@ pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
             }
             _ => Err(Error::InvalidUriScheme(uri.to_string())),
         },
-        Err(err) => Err(Error::ParseUriError(format!("uri: {err}"))),
+        Err(err) => Err(Error::ParseUriError(format!("uri: {uri} {err}"))),
     }
 }
 
@@ -43,24 +51,28 @@ fn get_authority_as_string(input: &Uri<&str>) -> String {
     }
 }
 
-pub fn uri_to_path(uri: &str) -> crate::Result<std::path::PathBuf> {
-    match parse_uri(uri) {
-        Ok(uri) => {
+fn decode_path(uri: &Uri<&str>) -> String
+{
+    match decode(&uri.path().to_string()) {
+    Ok(decoded_path) => {
             #[cfg(target_os = "windows")]
-            let path = format!(
+            return format!(
                 "{}{}",
-                get_authority_as_string(uri.borrow()),
-                uri.path().to_string().replace("/", "\\")
+                get_authority_as_string(uri),
+                decoded_path.replace("/", "\\")
             );
 
             #[cfg(not(target_os = "windows"))]
-            let path = uri.path().to_string();
+            return decoded_path.into_owned()
+    },
+    Err(_) => uri.to_string()
+    }
+}
 
-            let path = match decode(&uri.path().to_string()) {
-                Ok(decoded_path) => decoded_path.into_owned(),
-                Err(_) => path,
-            };
-
+pub fn uri_to_path(uri: &str) -> crate::Result<std::path::PathBuf> {
+    match parse_uri(uri) {
+        Ok(uri) => {
+            let path = decode_path(uri.borrow());
             Ok(PathBuf::from(path))
         }
         Err(e) => {
@@ -76,14 +88,17 @@ mod tests {
 
     #[test]
     pub fn test_uri_to_path_for_windows_path() {
-        let r = uri_to_path("file://C:/Users/Test/Pictures/my_file.jpg").unwrap();
+        let r = uri_to_path("file://C:/Users/Test/My Pictures/my_file.jpg").unwrap();
 
         #[cfg(target_os = "windows")]
         assert_eq!(
             r.to_str().unwrap(),
-            "C:\\Users\\Test\\Pictures\\my_file.jpg"
+            "C:\\Users\\Test\\My Pictures\\my_file.jpg"
         );
         #[cfg(not(target_os = "windows"))]
         assert_eq!(r.to_str().unwrap(), "/Users/Test/Pictures/my_file.jpg");
     }
+
+
+
 }
