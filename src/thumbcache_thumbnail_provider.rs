@@ -1,6 +1,5 @@
 use base64::{engine::general_purpose, Engine as _};
 use log::{error, trace};
-use std::fs;
 use std::path::Path;
 
 use crate::{thumbnail_provider::ThumbnailProvider, Error, GetThumbnailResponse};
@@ -15,7 +14,6 @@ impl ThumbnailProvider for ThumbCacheThumbnailProvider {
             thumbcache::ThumbSize::S96,
         ) {
             Ok(bmp) => {
-                trace!("yo");
                 let content = general_purpose::STANDARD.encode(&bmp);
                 Ok(GetThumbnailResponse { content })
             }

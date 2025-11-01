@@ -19,7 +19,16 @@ On android the plugin reads the content of the android media store.
 
 ## Linux
 
-On Linux it reads pictures from the XDG_PICTURE directory.
+On Linux it reads pictures from the XDG_PICTURE directory (using the tauri path().picture_dir()).
+You may enable a custom xdg directory reader using the `xdg` feature.
+
+### Thumbnails
+
+In order to get thumbnails, you may enable the `amt` feature, which uses the [allmytoes](https://crates.io/crates/allmytoes) crate.
+
+```
+cargo build --features allmytoes
+```
 
 ## Windows
 
@@ -30,7 +39,7 @@ https://tauri.app/reference/javascript/api/namespacepath/#picturedir
 
 ### Thumbnails
 
-Thumbnails can be read using the https://crates.io/crates/thumbcache crate.
+Thumbnails can be read using the [thumbcache](https://crates.io/crates/thumbcache) crate.
 When using thumbcache, you have to use the `thumb_cache` feature
 
 ```

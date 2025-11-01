@@ -19,11 +19,13 @@ mod models;
 mod scope;
 
 mod thumbnail_provider;
+
 mod uri;
 #[cfg(feature = "xdg")]
 mod xdg_directory_reader;
-#[cfg(feature = "xdg")]
-mod xdg_thumbnail_provider;
+
+#[cfg(feature = "amt")]
+mod amt_thumbnail_provider;
 
 #[cfg(feature = "thumb_cache")]
 mod thumbcache_thumbnail_provider;

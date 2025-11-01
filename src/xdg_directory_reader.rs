@@ -8,6 +8,7 @@ pub struct XdgDirectoryReader;
 impl DirectoryReader for XdgDirectoryReader {
     fn read_directory(&self, request: &GetLibraryContentRequest) -> Result<GetImagesResult, Error> {
         match &request.source {
+            #[cfg(not(target_os = "android"))]
             MediaLibrarySource::PictureDir => {
                 let pictures_dir = if let Some(dir) =
                     std::env::var_os("XDG_PICTURES_DIR").map(std::path::PathBuf::from)
@@ -24,6 +25,8 @@ impl DirectoryReader for XdgDirectoryReader {
                 let reader = WalkdirReader::new(&pictures_dir);
                 reader.read_directory(request)
             }
+            #[cfg(target_os = "android")]
+            _ => Err(Error::MediaLibrarySourceForbidden(request.source.clone())),
         }
     }
 }
