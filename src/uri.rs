@@ -13,11 +13,12 @@ fn with_encoded_path(uri: &str) -> String {
         let scheme = caps.name("scheme").map_or("", |m| m.as_str());
         let host = caps["host"].to_string();
         let path = &caps["path"];
-        
-        let encoded_path = path.split('/')
-            .map(|segment| encode(segment).into_owned())  // Encode each segment
+
+        let encoded_path = path
+            .split('/')
+            .map(|segment| encode(segment).into_owned()) // Encode each segment
             .collect::<Vec<String>>()
-            .join("/"); 
+            .join("/");
 
         format!("{}{}{}", scheme, host, encoded_path)
     } else {
@@ -51,10 +52,9 @@ fn get_authority_as_string(input: &Uri<&str>) -> String {
     }
 }
 
-fn decode_path(uri: &Uri<&str>) -> String
-{
+fn decode_path(uri: &Uri<&str>) -> String {
     match decode(&uri.path().to_string()) {
-    Ok(decoded_path) => {
+        Ok(decoded_path) => {
             #[cfg(target_os = "windows")]
             return format!(
                 "{}{}",
@@ -63,9 +63,9 @@ fn decode_path(uri: &Uri<&str>) -> String
             );
 
             #[cfg(not(target_os = "windows"))]
-            return decoded_path.into_owned()
-    },
-    Err(_) => uri.to_string()
+            return decoded_path.into_owned();
+        }
+        Err(_) => uri.to_string(),
     }
 }
 
@@ -96,9 +96,6 @@ mod tests {
             "C:\\Users\\Test\\My Pictures\\my_file.jpg"
         );
         #[cfg(not(target_os = "windows"))]
-        assert_eq!(r.to_str().unwrap(), "/Users/Test/Pictures/my_file.jpg");
+        assert_eq!(r.to_str().unwrap(), "/Users/Test/My Pictures/my_file.jpg");
     }
-
-
-
 }
