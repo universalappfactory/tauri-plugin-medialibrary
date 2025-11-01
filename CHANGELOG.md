@@ -1,5 +1,10 @@
 # Changelog
 
+## \[0.13.0]
+
+- [`4307e52`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/4307e520f137b27b799049fe646be366c01fb23b) -   updated tauri packages
+  - fixed a compile error bug due to a missing enum
+
 ## \[0.12.0]
 
 - [`9d0fea7`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/9d0fea70e25ca8906d072382907aba48f5617145) -   fixed build
