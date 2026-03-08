@@ -51,7 +51,7 @@ fn get_authority_as_string(input: &Uri<&str>) -> String {
 }
 
 fn decode_path(uri: &Uri<&str>) -> String {
-    match decode(&uri.path().to_string()) {
+    match decode(uri.path().as_ref()) {
         Ok(decoded_path) => {
             #[cfg(target_os = "windows")]
             return format!(
