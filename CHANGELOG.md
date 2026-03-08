@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.14.0]
+
+- [`763df5f`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/763df5f5c41c98117d35eaeaeb9a4d69d35dc7f3) -   updated dependencies
+
 ## \[0.13.0]
 
 - [`4307e52`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/4307e520f137b27b799049fe646be366c01fb23b) -   updated tauri packages
