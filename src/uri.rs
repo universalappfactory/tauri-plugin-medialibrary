@@ -27,20 +27,18 @@ fn with_encoded_path(uri: &str) -> String {
 }
 
 pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
-    let uri = with_encoded_path(&uri.replace("\\", "/"));
+    let encoded_uri = with_encoded_path(&uri.replace("\\", "/"));
 
-    match Uri::parse(uri.as_bytes()) {
-        Ok(uri) => match uri.scheme() {
-            Some(scheme) => {
-                if scheme.eq_lowercase("file") {
-                    Ok(uri.to_owned())
-                } else {
-                    Err(Error::InvalidUriScheme(scheme.to_string()))
-                }
+    match Uri::parse(encoded_uri) {
+        Ok(uri) => {
+            let scheme = uri.scheme().to_string();
+            if scheme.eq_ignore_ascii_case("file") {
+                Ok(uri.to_owned())
+            } else {
+                Err(Error::InvalidUriScheme(scheme.to_string()))
             }
-            _ => Err(Error::InvalidUriScheme(uri.to_string())),
-        },
-        Err(err) => Err(Error::ParseUriError(format!("uri: {uri} {err}"))),
+        }
+        Err(err) => Err(Error::ParseUriError(format!("uri: {uri} {err:?}"))),
     }
 }
 
@@ -53,7 +51,7 @@ fn get_authority_as_string(input: &Uri<&str>) -> String {
 }
 
 fn decode_path(uri: &Uri<&str>) -> String {
-    match decode(&uri.path().to_string()) {
+    match decode(uri.path().as_ref()) {
         Ok(decoded_path) => {
             #[cfg(target_os = "windows")]
             return format!(
@@ -72,7 +70,7 @@ fn decode_path(uri: &Uri<&str>) -> String {
 pub fn uri_to_path(uri: &str) -> crate::Result<std::path::PathBuf> {
     match parse_uri(uri) {
         Ok(uri) => {
-            let path = decode_path(uri.borrow());
+            let path = decode_path(&uri.borrow());
             Ok(PathBuf::from(path))
         }
         Err(e) => {
