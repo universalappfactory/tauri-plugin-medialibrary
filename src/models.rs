@@ -1,3 +1,4 @@
+use base64::{engine::general_purpose, Engine};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::{
@@ -119,6 +120,7 @@ pub struct ImageInfo {
     pub content_uri: String,
     pub mime_type: String,
     pub meta_data: Option<HashMap<MetaDataField, String>>,
+    pub image_uri: String,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -137,6 +139,25 @@ pub struct PermissionResponse {
 #[serde(rename_all = "camelCase")]
 pub struct GetThumbnailResponse {
     pub content: String,
+}
+
+impl From<Thumbnail> for GetThumbnailResponse {
+    fn from(thumbnail: Thumbnail) -> Self {
+        Self {
+            content: general_purpose::STANDARD.encode(&thumbnail.content),
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct Thumbnail {
+    pub content: Vec<u8>,
+}
+
+impl From<Vec<u8>> for Thumbnail {
+    fn from(content: Vec<u8>) -> Self {
+        Self { content }
+    }
 }
 
 impl PermissionResponse {
