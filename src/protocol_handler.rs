@@ -83,4 +83,46 @@ mod tests {
             "image://localhost/path/to/file with spaces.txt"
         );
     }
+
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn test_build_uri_from_path() {
+        let path = Path::new("C:\\path\\to\\file.txt");
+        assert_eq!(
+            build_uri_from_path("image", path),
+            "http://image.localhost/C%3A%5Cpath%5Cto%5Cfile%2Etxt"
+        );
+        assert_eq!(
+            build_uri_from_path("thumbnail", path),
+            "http://thumbnail.localhost/C%3A%5Cpath%5Cto%5Cfile%2Etxt"
+        );
+    }
+
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn test_get_uri_string_from_request() {
+        // URIs without percent-encoding are returned as-is.
+        let request = http::Request::builder()
+            .uri("thumbnail://localhost/C%3A%5Cpath%5Cto%5Cfile%2Etxt")
+            .body(vec![])
+            .unwrap();
+        assert_eq!(
+            get_uri_string_from_request(&request),
+            "thumbnail://C:\\path\\to\\file.txt"
+        );
+    }
+
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn test_get_uri_string_from_request_decodes_percent_encoding() {
+        // Percent-encoded characters (e.g. spaces) must be decoded.
+        let request = http::Request::builder()
+            .uri("thumbnail://localhost/C%3A%5Cpath%5Cto%5Cfile%20with%20spaces.txt")
+            .body(vec![])
+            .unwrap();
+        assert_eq!(
+            get_uri_string_from_request(&request),
+            "thumbnail://C:\\path\\to\\file with spaces.txt"
+        );
+    }
 }
