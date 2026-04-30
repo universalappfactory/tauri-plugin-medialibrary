@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.15.0]
+
+- ## [`50cbb6d`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/50cbb6d7708f55a50a6d789d7d638bf450f538ff) -   Added custom protocol handlers in order to load images using <img src="..." /> (check the ReadMe.md)
+
 ## \[0.14.0]
 
 - [`763df5f`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/763df5f5c41c98117d35eaeaeb9a4d69d35dc7f3) -   updated dependencies
