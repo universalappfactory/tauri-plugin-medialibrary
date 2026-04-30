@@ -17,6 +17,7 @@ mod commands;
 mod directory_reader;
 mod error;
 mod models;
+mod protocol_handler;
 mod scope;
 
 mod thumbnail_provider;

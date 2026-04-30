@@ -49,6 +49,23 @@ fn get_mime_type(path: &Path) -> String {
     }
 }
 
+fn build_uri(scheme: &str, path: &Path) -> String {
+    #[cfg(target_os = "windows")]
+    {
+        use percent_encoding::NON_ALPHANUMERIC;
+
+        let path =
+            percent_encoding::utf8_percent_encode(&(path.to_string_lossy()), NON_ALPHANUMERIC)
+                .to_string();
+        return format!("http://{}.localhost/{}", scheme, path);
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        return format!("{}://{}", scheme, path.to_str().unwrap_or_default());
+    }
+}
+
 impl<'a> DirectoryReader for WalkdirReader<'a> {
     fn read_directory(&self, request: &GetLibraryContentRequest) -> Result<GetImagesResult, Error> {
         match &request.source {
@@ -93,8 +110,8 @@ impl<'a> DirectoryReader for WalkdirReader<'a> {
                         content_uri: format!("file://{}", path.to_string_lossy()),
                         mime_type: get_mime_type(path),
                         meta_data: get_meta_data(modified, created),
-                        image_uri: format!("image://localhost{}", path.to_string_lossy()),
-                        thumbnail_uri: format!("thumbnail://localhost{}", path.to_string_lossy()),
+                        image_uri: build_uri("image", path),
+                        thumbnail_uri: build_uri("thumbnail", path),
                     });
                 }
 
