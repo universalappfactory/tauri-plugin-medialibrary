@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
@@ -50,7 +52,7 @@ impl<R: Runtime> Medialibrary<R> {
     }
 
     pub fn get_image(&self, _request: GetImageRequest) -> crate::Result<Option<ImageInfo>> {
-        todo!()
+        unimplemented!()
     }
 
     pub fn delete_image(&self, request: DeleteImageRequest) -> crate::Result<()> {
@@ -74,16 +76,57 @@ impl<R: Runtime> Medialibrary<R> {
         Ok(PermissionResponse::granted())
     }
 
-    pub async fn get_thumbnail(&self, uri: String) -> crate::Result<GetThumbnailResponse> {
+    pub async fn get_thumbnail_data(&self, uri: String) -> crate::Result<Thumbnail> {
         match uri_to_path(&uri) {
             Ok(path) => {
                 #[cfg(feature = "amt")]
                 return AmtThumbnailProvider::get_thumbnail(&path);
+
                 #[cfg(feature = "thumb_cache")]
                 return ThumbCacheThumbnailProvider::get_thumbnail(&path);
 
                 #[cfg(all(not(feature = "thumb_cache"), not(feature = "amt")))]
                 EmptyThumbnailProvider::get_thumbnail(&path)
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    pub async fn get_image_data(&self, uri: String) -> crate::Result<Image> {
+        match uri_to_path(&uri) {
+            Ok(path) => {
+                let mut file = std::fs::File::open(&path)?;
+                let file_len = file.metadata()?.len();
+
+                let mut buf = Vec::with_capacity(file_len as usize);
+                file.read_to_end(&mut buf)?;
+
+                Ok(buf.into())
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    pub async fn get_thumbnail(&self, uri: String) -> crate::Result<GetThumbnailResponse> {
+        match uri_to_path(&uri) {
+            Ok(path) => {
+                #[cfg(feature = "amt")]
+                {
+                    return Ok(GetThumbnailResponse::from(
+                        AmtThumbnailProvider::get_thumbnail(&path)?,
+                    ));
+                }
+                #[cfg(feature = "thumb_cache")]
+                {
+                    return Ok(GetThumbnailResponse::from(
+                        ThumbCacheThumbnailProvider::get_thumbnail(&path)?,
+                    ));
+                }
+
+                #[cfg(all(not(feature = "thumb_cache"), not(feature = "amt")))]
+                Ok(GetThumbnailResponse::from(
+                    EmptyThumbnailProvider::get_thumbnail(&path)?,
+                ))
             }
             Err(err) => Err(err),
         }

@@ -32,7 +32,10 @@ pub fn parse_uri(uri: &str) -> crate::Result<Uri<String>> {
     match Uri::parse(encoded_uri) {
         Ok(uri) => {
             let scheme = uri.scheme().to_string();
-            if scheme.eq_ignore_ascii_case("file") {
+            if scheme.eq_ignore_ascii_case("file")
+                || scheme.eq_ignore_ascii_case("thumbnail")
+                || scheme.eq_ignore_ascii_case("image")
+            {
                 Ok(uri.to_owned())
             } else {
                 Err(Error::InvalidUriScheme(scheme.to_string()))

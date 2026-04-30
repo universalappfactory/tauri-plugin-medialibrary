@@ -42,6 +42,8 @@ export interface ImageInfo {
   contentUri: string;
   mimeType: string;
   metaData?: Record<MetadataField, string>;
+  imageUri: string;
+  thumbnailUri: string;
 }
 
 export interface GetImagesResult {

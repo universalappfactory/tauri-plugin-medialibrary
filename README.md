@@ -192,6 +192,13 @@ const request: GetLibraryContentRequest = {
 };
 
 const result = await getImages(request);
+
+for (const item in result.items) {
+  // you can directly use this uris in <img> elements, because the plugin registers according protocol handlers
+  console.log(item.imageUri)
+  console.log(item.thumbnailUri)
+}
+
 ```
 
 ## Open an image with the default application
@@ -219,6 +226,19 @@ match self.app_handle.fs().open(path, options) {
       ...
     }
 }
+```
+
+## Custom protocol handlers
+
+The plugin registers two custom protocol handlers `thumbnail` and `image`.
+You can directly use it to resolve image or thumbnail data:
+
+```
+<img :src="item.thumbnailUri"/>
+
+or
+
+<img :src="item.imageUri"/>
 ```
 
 ## Example Application

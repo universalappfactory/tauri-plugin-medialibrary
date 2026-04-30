@@ -88,11 +88,15 @@ impl<'a> DirectoryReader for WalkdirReader<'a> {
                     &all_entries[skip..(skip + limit).min(all_entries.len())]
                 };
                 for (path, modified, created) in page {
+                    use crate::protocol_handler::build_uri_from_path;
+
                     items.push(ImageInfo {
                         path: path.to_string_lossy().to_string(),
                         content_uri: format!("file://{}", path.to_string_lossy()),
                         mime_type: get_mime_type(path),
                         meta_data: get_meta_data(modified, created),
+                        image_uri: build_uri_from_path("image", path),
+                        thumbnail_uri: build_uri_from_path("thumbnail", path),
                     });
                 }
 

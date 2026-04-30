@@ -1,11 +1,12 @@
+use http::{header::*, status::StatusCode};
+use log::error;
+pub use models::*;
 use tauri::{
     ipc::ScopeObject,
     plugin::{Builder, TauriPlugin},
     utils::acl::Value,
     AppHandle, Manager, Runtime,
 };
-
-pub use models::*;
 
 #[cfg(desktop)]
 mod desktop;
@@ -16,6 +17,7 @@ mod commands;
 mod directory_reader;
 mod error;
 mod models;
+mod protocol_handler;
 mod scope;
 
 mod thumbnail_provider;
@@ -30,6 +32,9 @@ mod amt_thumbnail_provider;
 #[cfg(feature = "thumb_cache")]
 mod thumbcache_thumbnail_provider;
 mod walkdir_reader;
+
+mod image_protocol_handler;
+mod thumbnail_protocol_handler;
 
 pub use error::{Error, Result};
 
@@ -66,6 +71,14 @@ impl<R: Runtime, T: Manager<R>> crate::MedialibraryExt<R> for T {
     }
 }
 
+fn error_response(e: Box<dyn std::error::Error>) -> http::Response<Vec<u8>> {
+    http::Response::builder()
+        .status(StatusCode::INTERNAL_SERVER_ERROR)
+        .header(CONTENT_TYPE, "text/plain")
+        .body(e.to_string().into_bytes())
+        .unwrap()
+}
+
 /// Initializes the plugin.
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("medialibrary")
@@ -84,6 +97,30 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             let medialibrary = desktop::init(app, api)?;
             app.manage(medialibrary);
             Ok(())
+        })
+        .register_asynchronous_uri_scheme_protocol("thumbnail", move |ctx, request, responder| {
+            match tauri::async_runtime::block_on(thumbnail_protocol_handler::get_response(
+                request,
+                ctx.app_handle(),
+            )) {
+                Ok(http_response) => responder.respond(http_response),
+                Err(e) => {
+                    error!("{e}");
+                    responder.respond(error_response(e))
+                }
+            }
+        })
+        .register_asynchronous_uri_scheme_protocol("image", move |ctx, request, responder| {
+            match tauri::async_runtime::block_on(image_protocol_handler::get_response(
+                request,
+                ctx.app_handle(),
+            )) {
+                Ok(http_response) => responder.respond(http_response),
+                Err(e) => {
+                    error!("{e}");
+                    responder.respond(error_response(e))
+                }
+            }
         })
         .build()
 }

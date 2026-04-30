@@ -1,3 +1,4 @@
+use log::{debug, error};
 use serde::{de::DeserializeOwned, Serialize};
 use tauri::{
     plugin::{PluginApi, PluginHandle},
@@ -5,6 +6,7 @@ use tauri::{
 };
 
 use crate::models::*;
+use base64::Engine;
 
 #[cfg(target_os = "ios")]
 tauri::ios_plugin_binding!(init_plugin_medialibrary);
@@ -55,6 +57,33 @@ impl<R: Runtime> Medialibrary<R> {
             .0
             .run_mobile_plugin("getThumbnailAsBase64", uri)
             .map_err(Into::into);
+    }
+
+    pub async fn get_thumbnail_data(&self, uri: String) -> crate::Result<Thumbnail> {
+        let base64: Base64Response = self
+            .0
+            .run_mobile_plugin(
+                "getThumbnailAsBase64",
+                uri.replace("thumbnail://localhost/", "content://"),
+            )
+            .map_err(|e| crate::Error::GetDataError(e.to_string()))?;
+        let data = base64::prelude::BASE64_STANDARD.decode(&base64.content)?;
+        Ok(data.into())
+    }
+
+    pub async fn get_image_data(&self, uri: String) -> crate::Result<Image> {
+        // ToDo: Maybe there is a better way to get the image data from android
+        // Converting to base64 and decoding again may be inefficient
+        let base64: Base64Response = self
+            .0
+            .run_mobile_plugin(
+                "getImageAsBase64",
+                uri.replace("image://localhost/", "content://"),
+            )
+            .map_err(|e| crate::Error::GetDataError(e.to_string()))?;
+
+        let data = base64::prelude::BASE64_STANDARD.decode(&base64.content)?;
+        Ok(data.into())
     }
 
     pub fn request_permissions(

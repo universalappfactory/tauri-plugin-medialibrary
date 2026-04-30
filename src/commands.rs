@@ -4,7 +4,6 @@ use crate::Result;
 use crate::{models::*, Error};
 use tauri::ipc::{CommandScope, GlobalScope};
 use tauri::{command, AppHandle, Runtime};
-use log::trace;
 
 #[command]
 pub(crate) async fn get_images<R: Runtime>(
@@ -43,7 +42,6 @@ pub(crate) async fn get_thumbnail<R: Runtime>(
     app: AppHandle<R>,
     uri: String,
 ) -> Result<GetThumbnailResponse> {
-    trace!("get_thumbnail");
     return app.medialibrary().get_thumbnail(uri).await;
 }
 

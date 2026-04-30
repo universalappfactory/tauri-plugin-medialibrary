@@ -171,11 +171,25 @@ class MediaLibrary(
                 null
             }
 
+    fun getImageAsBase64(uri: Uri): String? =
+            try {
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    ByteArrayOutputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                        Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+                    }
+
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to get image for URI: $uri", e)
+                null
+            }
+
     fun getThumbnailAsBase64(uri: Uri): String? =
             getThumbnail(uri)?.let { thumbnail ->
                 ByteArrayOutputStream().use { outputStream ->
                     thumbnail.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
-                    Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+                    Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
                 }
             }
 
@@ -226,6 +240,8 @@ class MediaLibrary(
 
         ret.put("path", imagePath)
         ret.put("contentUri", contentUri.toString())
+        ret.put("imageUri", contentUri.toString().replace("content://", "http://image.localhost/"))
+        ret.put("thumbnailUri", contentUri.toString().replace("content://", "http://thumbnail.localhost/"))
         ret.put("mimeType", mimeType)
         ret.put("metaData", metaData)
 
