@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
@@ -85,6 +87,21 @@ impl<R: Runtime> Medialibrary<R> {
 
                 #[cfg(all(not(feature = "thumb_cache"), not(feature = "amt")))]
                 EmptyThumbnailProvider::get_thumbnail(&path)
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    pub async fn get_image_data(&self, uri: String) -> crate::Result<Image> {
+        match uri_to_path(&uri) {
+            Ok(path) => {
+                let mut file = std::fs::File::open(&path)?;
+                let file_len = file.metadata()?.len();
+
+                let mut buf = Vec::with_capacity(file_len as usize);
+                file.read_to_end(&mut buf)?;
+
+                Ok(buf.into())
             }
             Err(err) => Err(err),
         }

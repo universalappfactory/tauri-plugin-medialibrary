@@ -160,6 +160,17 @@ impl From<Vec<u8>> for Thumbnail {
     }
 }
 
+#[derive(Default)]
+pub struct Image {
+    pub content: Vec<u8>,
+}
+
+impl From<Vec<u8>> for Image {
+    fn from(content: Vec<u8>) -> Self {
+        Self { content }
+    }
+}
+
 impl PermissionResponse {
     pub fn granted() -> Self {
         Self {

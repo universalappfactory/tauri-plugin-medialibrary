@@ -7,7 +7,7 @@ pub(crate) async fn get_response<R: Runtime>(
     request: http::Request<Vec<u8>>,
     app: &AppHandle<R>,
 ) -> Result<http::Response<Vec<u8>>, Box<dyn std::error::Error>> {
-    let uri_str = percent_encoding::percent_decode(&request.uri().to_string().as_bytes())
+    let uri_str = percent_encoding::percent_decode(request.uri().to_string().as_bytes())
         .decode_utf8_lossy()
         .to_string();
 
