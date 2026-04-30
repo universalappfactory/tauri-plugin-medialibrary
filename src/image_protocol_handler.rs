@@ -16,7 +16,6 @@ pub(crate) async fn get_response<R: Runtime>(
 
     Ok(ResponseBuilder::new()
         .status(StatusCode::OK)
-        // .header(CONTENT_TYPE, "image/png") //ToDo determine contenttype
         .header(CONTENT_LENGTH, file_len)
         .body(image.content)?)
 }

@@ -121,6 +121,7 @@ pub struct ImageInfo {
     pub mime_type: String,
     pub meta_data: Option<HashMap<MetaDataField, String>>,
     pub image_uri: String,
+    pub thumbnail_uri: String,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -138,6 +139,12 @@ pub struct PermissionResponse {
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetThumbnailResponse {
+    pub content: String,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Base64Response {
     pub content: String,
 }
 

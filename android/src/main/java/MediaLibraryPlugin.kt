@@ -108,11 +108,24 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
     fun getThumbnailAsBase64(invoke: Invoke) {
         val args = invoke.parseArgs(GetThumbnailArgs::class.java)
 
-        // requestPermissions(invoke)
         val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
 
         val uri = Uri.parse(args.uri)
         val content = mediaLibaray.getThumbnailAsBase64(uri)
+
+        val ret = JSObject()
+        ret.put("content", content ?: "")
+        invoke.resolve(ret)
+    }
+
+    @Command
+    fun getImageAsBase64(invoke: Invoke) {
+        val args = invoke.parseArgs(GetThumbnailArgs::class.java)
+
+        val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
+
+        val uri = Uri.parse(args.uri)
+        val content = mediaLibaray.getImageAsBase64(uri)
 
         val ret = JSObject()
         ret.put("content", content ?: "")

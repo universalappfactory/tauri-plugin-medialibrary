@@ -27,6 +27,10 @@ pub enum Error {
     ParseUriError(String),
     #[error("invalid uri scheme: {0}")]
     InvalidUriScheme(String),
+    #[error("base64 decode error: {0}")]
+    Base64(#[from] base64::DecodeError),
+    #[error("get data error")]
+    GetDataError(String),
 }
 
 impl Serialize for Error {

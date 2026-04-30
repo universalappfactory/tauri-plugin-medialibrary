@@ -94,6 +94,7 @@ impl<'a> DirectoryReader for WalkdirReader<'a> {
                         mime_type: get_mime_type(path),
                         meta_data: get_meta_data(modified, created),
                         image_uri: format!("image://localhost{}", path.to_string_lossy()),
+                        thumbnail_uri: format!("thumbnail://localhost{}", path.to_string_lossy()),
                     });
                 }
 
