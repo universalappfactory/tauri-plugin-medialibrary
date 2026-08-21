@@ -40,7 +40,7 @@ impl<R: Runtime> Medialibrary<R> {
             .map_err(Into::into)
     }
 
-    pub fn delete_image(&self, request: DeleteImageRequest) -> crate::Result<()> {
+    pub fn delete_images(&self, request: DeleteImageRequest) -> crate::Result<DeleteImageResponse> {
         self.0
             .run_mobile_plugin("executeRecoverableDeleteRequest", request)
             .map_err(Into::into)

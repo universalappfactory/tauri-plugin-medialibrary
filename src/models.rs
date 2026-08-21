@@ -98,12 +98,25 @@ impl From<String> for GetImageRequest {
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DeleteImageRequest {
-    pub uri: String,
+    pub uri: Vec<String>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DeleteImageResponse {
+    pub success: Vec<String>,
+    pub failed: Vec<String>,
 }
 
 impl From<String> for DeleteImageRequest {
     fn from(uri: String) -> Self {
-        DeleteImageRequest { uri }
+        DeleteImageRequest { uri: vec![uri] }
+    }
+}
+
+impl From<Vec<String>> for DeleteImageRequest {
+    fn from(uris: Vec<String>) -> Self {
+        DeleteImageRequest { uri: uris }
     }
 }
 

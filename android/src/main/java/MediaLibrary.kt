@@ -300,4 +300,25 @@ class MediaLibrary(
         }
         throw Exception("Failed to delete image")
     }
+
+    fun deleteImages(uris: List<Uri>): JSObject {
+        val ret = JSObject()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // First try direct deletion (works for files owned by this app)
+            var deletedRows = 0
+            for (uri in uris) {
+                deletedRows += contentResolver.delete(uri, null, null)
+            }
+
+            if (deletedRows > 0) {
+                ret.put("success", true)
+                return ret
+            } else {
+                ret.put("success", false)
+                return ret
+            }
+        }
+        throw Exception("Failed to delete image")
+    }
 }

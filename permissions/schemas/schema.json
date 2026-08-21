@@ -307,6 +307,18 @@
           "markdownDescription": "Denies the delete_image command without any pre-configured scope."
         },
         {
+          "description": "Enables the delete_images command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-delete-images",
+          "markdownDescription": "Enables the delete_images command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the delete_images command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-delete-images",
+          "markdownDescription": "Denies the delete_images command without any pre-configured scope."
+        },
+        {
           "description": "Enables the get_available_sources command without any pre-configured scope.",
           "type": "string",
           "const": "allow-get-available-sources",

@@ -73,20 +73,24 @@ class MediaLibraryPlugin(private val activity: Activity) : Plugin(activity) {
     fun executeRecoverableDeleteRequest(invoke: Invoke) {
         val args = invoke.parseArgs(DeleteImageArgs::class.java)
         try {
-            val uri = Uri.parse(args.uri)
+            val uris = args.uri.map { Uri.parse(it) }
 
             try {
                 val mediaLibaray = MediaLibrary(activity.contentResolver, activity)
-                val result = mediaLibaray.deleteImage(args.uri)
+                val result = mediaLibaray.deleteImages(uris)
                 invoke.resolve(result)
             } catch (securityException: RecoverableSecurityException) {
-                val urisToDelete = listOf(uri)
                 val pendingIntent =
-                        MediaStore.createDeleteRequest(activity.contentResolver, urisToDelete)
+                        MediaStore.createDeleteRequest(activity.contentResolver, uris)
 
                 val request = IntentSenderRequest.Builder(pendingIntent.getIntentSender()).build()
                 startIntentSenderForResult(invoke, request, "deleteActivityResult")
             }
+
+            val ret = JSObject()
+            ret.put("success", JSArray())
+            ret.put("failed", JSArray())
+            invoke.resolve(ret)
         } catch (e: Exception) {
             invoke.reject("Failed to handle recoverable delete request: ${e.message}")
         }

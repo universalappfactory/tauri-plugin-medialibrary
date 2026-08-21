@@ -103,6 +103,14 @@ export async function deleteImage(contentUri: string): Promise<void> {
   });
 }
 
+export async function deleteImages(contentUris: string[]): Promise<void> {
+  return await invokeCommand<void>(async () => {
+    return await invoke("plugin:medialibrary|delete_images", {
+      uris: contentUris
+    });
+  });
+}
+
 export async function getThumbnail(
   uri: string,
 ): Promise<GetThumbnailResponse | null> {
