@@ -1,5 +1,6 @@
 use std::io::Read;
 
+use log::warn;
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
@@ -55,14 +56,25 @@ impl<R: Runtime> Medialibrary<R> {
         unimplemented!()
     }
 
-    pub fn delete_image(&self, request: DeleteImageRequest) -> crate::Result<()> {
-        match uri_to_path(&request.uri) {
-            Ok(path) => match std::fs::remove_file(&path) {
-                Ok(_) => Ok(()),
-                Err(err) => Err(err.into()),
-            },
-            Err(err) => Err(err),
+    pub fn delete_images(&self, request: DeleteImageRequest) -> crate::Result<DeleteImageResponse> {
+        let mut success = Vec::new();
+        let mut failed = Vec::new();
+        for uri in &request.uri {
+            match uri_to_path(uri) {
+                Ok(path) => match std::fs::remove_file(&path) {
+                    Ok(_) => success.push(uri.clone()),
+                    Err(err) => {
+                        warn!("Failed to delete image {}: {}", uri, err);
+                        failed.push(uri.clone());
+                    }
+                },
+                Err(err) => {
+                    warn!("Failed to parse uri {}: {}", uri, err);
+                    failed.push(uri.clone())
+                }
+            }
         }
+        Ok(DeleteImageResponse { success, failed })
     }
 
     pub fn check_permissions(&self) -> crate::Result<PermissionResponse> {

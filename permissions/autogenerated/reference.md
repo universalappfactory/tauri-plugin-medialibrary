@@ -40,6 +40,32 @@ Denies the delete_image command without any pre-configured scope.
 <tr>
 <td>
 
+`medialibrary:allow-delete-images`
+
+</td>
+<td>
+
+Enables the delete_images command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`medialibrary:deny-delete-images`
+
+</td>
+<td>
+
+Denies the delete_images command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `medialibrary:allow-get-available-sources`
 
 </td>

@@ -40,6 +40,8 @@ class GetImageArgs(val uri: String) {
 }
 
 @InvokeArg
-class DeleteImageArgs(val uri: String) {
-    constructor() : this("")
+class DeleteImageArgs(val uri: List<String>) {
+
+    constructor() : this(emptyList())
+
 }
