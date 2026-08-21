@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.18.0]
+
+- [`35eae2d`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/35eae2d8219d1069b5ece5246ac59c79c7aeb0eb) - added a `delete_images` command
+
 ## \[0.17.0]
 
 - [`01d4dfb`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/01d4dfb1318448211ab4b592cbfb67013b9e4faa) -   updated dependencies
