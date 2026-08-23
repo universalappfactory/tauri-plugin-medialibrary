@@ -16,7 +16,7 @@ mod mobile;
 mod commands;
 mod directory_reader;
 mod error;
-mod models;
+pub mod models;
 mod protocol_handler;
 mod scope;
 
