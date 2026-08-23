@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.18.1]
+
+- [`14cec41`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/14cec414374ffd21057783f4e8c62ede344a96f9) - made models module public
+
 ## [0.18.0]
 
 - [`35eae2d`](https://github.com/universalappfactory/tauri-plugin-medialibrary/commit/35eae2d8219d1069b5ece5246ac59c79c7aeb0eb) - added a `delete_images` command
